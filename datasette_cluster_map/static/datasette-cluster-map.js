@@ -50,7 +50,12 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
             map.fitBounds(markerClusterGroup.getBounds());
             let percent = '';
             let button;
-            if (data.next_url) {
+            // Fix for http v.s. https
+            let next_url = data.next_url;
+            if (location.protocol == 'https:') {
+                next_url = next_url.replace(/^https?:/, 'https:');
+            }
+            if (next_url) {
                 percent = ` (${Math.round((count / data.filtered_table_rows_count * 100) * 100) / 100}%)`;
                 // Add a control to either continue loading or pause
                 button = document.createElement('button');
@@ -74,7 +79,7 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
                     button.addEventListener('click', () => {
                         keepGoing = true;
                         loadMarkers(
-                            data.next_url, //.next_url.replace('http://', 'https://'),
+                            next_url,
                             map,
                             markerClusterGroup,
                             progressDiv,
@@ -88,12 +93,7 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
             if (button) {
                 progressDiv.appendChild(button);
             }
-            if (data.next_url && keepGoing) {
-                // Fix for http v.s. https
-                let next_url = data.next_url;
-                if (location.protocol == 'https:') {
-                    next_url = next_url.replace(/^https?:/, 'https:');
-                }
+            if (next_url && keepGoing) {
                 return loadMarkers(
                     next_url,
                     map,
