@@ -21,3 +21,12 @@ If any of your tables have a `latitude` and `longitude` column, a map will be au
 If you columns are called something else you can still get the map to display by using a custom SQL query to alias those columns to `latitude` and `longitude`, for example:
 
     select name, lat as latitude, lng as longitude from my_table
+
+## How I deployed the demo
+
+I deploy this demo using the latest master versions of both datasette and datasette-cluster-map like so:
+
+    datasette publish now --branch=master \
+        --install=https://github.com/simonw/datasette-cluster-map/archive/master.zip \
+        --extra-options "--page_size=500" \
+        polar-bears.db sf-trees.db
