@@ -89,8 +89,13 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
                 progressDiv.appendChild(button);
             }
             if (data.next_url && keepGoing) {
+                // Fix for http v.s. https
+                let next_url = data.next_url;
+                if (location.protocol == 'https:') {
+                    next_url = next_url.replace(/^https?:/, 'https:');
+                }
                 return loadMarkers(
-                    data.next_url, //.next_url.replace('http://', 'https://'),
+                    next_url,
                     map,
                     markerClusterGroup,
                     progressDiv,
