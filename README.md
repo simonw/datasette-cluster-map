@@ -2,9 +2,11 @@
 
 A [Datasette plugin](http://datasette.readthedocs.io/en/latest/plugins.html) that detects tables with `latitude` and `longitude` columns and then plots them on a map using [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster).
 
+More about this project: [Datasette plugins, and building a clustered map visualization](https://simonwillison.net/2018/Apr/20/datasette-plugins/)
+
 ## Demo
 
-https://datasette-cluster-map-demo.now.sh/ hosts a demo of this plugin running against several different tables.
+https://datasette-cluster-map-demo.datasettes.com/ hosts a demo of this plugin running against several different tables.
 
 ![Cluster map demo](https://static.simonwillison.net/static/2018/datasette-cluster-map.png)
 
@@ -18,7 +20,7 @@ If you are deploying using the `datasette publish` command you can use the `--in
 
 If any of your tables have a `latitude` and `longitude` column, a map will be automatically displayed.
 
-If you columns are called something else you can still get the map to display by using a custom SQL query to alias those columns to `latitude` and `longitude`, [for example](https://datasette-cluster-map-demo.now.sh/polar-bears-455fe3a?sql=select+*%2C+%22Capture+Latitude%22+as+latitude%2C+%22Capture+Longitude%22+as+longitude+from+[USGS_WC_eartag_deployments_2009-2011]):
+If you columns are called something else you can still get the map to display by using a custom SQL query to alias those columns to `latitude` and `longitude`, [for example](https://datasette-cluster-map-demo.datasettes.com/polar-bears-455fe3a?sql=select+*%2C+%22Capture+Latitude%22+as+latitude%2C+%22Capture+Longitude%22+as+longitude+from+[USGS_WC_eartag_deployments_2009-2011]):
 
     select *, "Capture Latitude" as latitude, "Capture Longitude" as longitude
     from [USGS_WC_eartag_deployments_2009-2011]
