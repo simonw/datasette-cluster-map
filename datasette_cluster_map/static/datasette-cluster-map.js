@@ -52,7 +52,7 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
             let button;
             // Fix for http v.s. https
             let next_url = data.next_url;
-            if (location.protocol == 'https:') {
+            if (next_url && location.protocol == 'https:') {
                 next_url = next_url.replace(/^https?:/, 'https:');
             }
             if (next_url) {
@@ -88,10 +88,12 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
                         );
                     });
                 }
-            }
-            progressDiv.innerHTML = `Showing ${count.toLocaleString()} of ${data.filtered_table_rows_count.toLocaleString()}${percent} `;
-            if (button) {
-                progressDiv.appendChild(button);
+                progressDiv.innerHTML = `Showing ${count.toLocaleString()} of ${data.filtered_table_rows_count.toLocaleString()}${percent} `;
+                if (button) {
+                    progressDiv.appendChild(button);
+                }
+            } else {
+                progressDiv.innerHTML = '';
             }
             if (next_url && keepGoing) {
                 return loadMarkers(
