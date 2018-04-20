@@ -18,9 +18,10 @@ If you are deploying using the `datasette publish` command you can use the `--in
 
 If any of your tables have a `latitude` and `longitude` column, a map will be automatically displayed.
 
-If you columns are called something else you can still get the map to display by using a custom SQL query to alias those columns to `latitude` and `longitude`, for example:
+If you columns are called something else you can still get the map to display by using a custom SQL query to alias those columns to `latitude` and `longitude`, [for example](https://datasette-cluster-map-demo.now.sh/polar-bears-455fe3a?sql=select+*%2C+%22Capture+Latitude%22+as+latitude%2C+%22Capture+Longitude%22+as+longitude+from+[USGS_WC_eartag_deployments_2009-2011]):
 
-    select name, lat as latitude, lng as longitude from my_table
+    select *, "Capture Latitude" as latitude, "Capture Longitude" as longitude
+    from [USGS_WC_eartag_deployments_2009-2011]
 
 ## How I deployed the demo
 
@@ -29,4 +30,5 @@ I deploy this demo using the latest master versions of both datasette and datase
     datasette publish now --branch=master \
         --install=https://github.com/simonw/datasette-cluster-map/archive/master.zip \
         --extra-options "--page_size=500" \
+        --name="datasette-cluster-map-demo" \
         polar-bears.db sf-trees.db
