@@ -41,7 +41,7 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
                         ),
                         {title: title}
                     );
-                    marker.bindPopup('<pre>' + title + '</pre>');
+                    marker.bindPopup('<pre style="height: 200px; overflow: auto">' + title + '</pre>');
                     markerList.push(marker);
                 }
             });
