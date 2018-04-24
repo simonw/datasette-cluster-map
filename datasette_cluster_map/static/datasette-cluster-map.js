@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.querySelector('body.table,body.row,body.query')) {
         // Does it have Latitude and Longitude columns?
         let columns = Array.prototype.map.call(
-            document.querySelectorAll('th'),
+            document.querySelectorAll('table.rows-and-columns th'),
             (th) => {
                 return th.className.replace(/^col\-/, '')
             }
@@ -121,7 +121,7 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
         zoom: 13,
         layers: [tiles]
     });
-    let table = document.getElementsByTagName('table')[0];
+    let table = document.getElementsByTagName('table.rows-and-columns')[0];
     table.parentNode.insertBefore(el, table);
     let progressDiv = document.createElement('div');
     progressDiv.style.marginBottom = '2em';
