@@ -121,7 +121,7 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
         zoom: 13,
         layers: [tiles]
     });
-    let table = document.getElementsByTagName('table.rows-and-columns')[0];
+    let table = document.querySelector('table.rows-and-columns');
     table.parentNode.insertBefore(el, table);
     let progressDiv = document.createElement('div');
     progressDiv.style.marginBottom = '2em';
