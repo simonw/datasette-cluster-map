@@ -1,5 +1,9 @@
 # datasette-cluster-map
 
+[![PyPI](https://img.shields.io/pypi/v/datasette-cluster-map.svg)](https://pypi.python.org/pypi/datasette-cluster-map)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/simonw/datasette-cluster-map/blob/master/LICENSE)
+
+
 A [Datasette plugin](http://datasette.readthedocs.io/en/latest/plugins.html) that detects tables with `latitude` and `longitude` columns and then plots them on a map using [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster).
 
 More about this project: [Datasette plugins, and building a clustered map visualization](https://simonwillison.net/2018/Apr/20/datasette-plugins/)
