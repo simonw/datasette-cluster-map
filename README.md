@@ -75,3 +75,21 @@ You can also use a custom SQL query to rename those columns to `latitude` and `l
         --name="datasette-cluster-map-demo" \
         --alias="datasette-cluster-map-demo.datasettes.com" \
         polar-bears.db sf-trees.db
+
+## Configuring the leaflet.js tile provider
+
+You can configure which tile server is used to provide the map tiles.  This uses the [leaflet-provider](https://github.com/leaflet-extras/leaflet-providers) extension. You can see previews of the various tile providers and discover the provider names [here](http://leaflet-extras.github.io/leaflet-providers/preview/). 
+
+To set the tile provider, you can edit the metadata.json like so:
+
+    {
+        "title": "Regular metadata keys can go here too",
+        "plugins": {
+            "datasette-cluster-map": {
+                "leaflet_tile_provider": "Esri.WorldTopoMap"
+            }
+        }
+    }
+
+The default tile provider name is "OpenStreetMap.Mapnik" which then uses the https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png tiles.
+
