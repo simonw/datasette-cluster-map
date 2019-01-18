@@ -30,6 +30,10 @@ def extra_js_urls():
             "url": "https://unpkg.com/leaflet.markercluster@1.3.0/dist/leaflet.markercluster-src.js",
             "sri": "sha384-NAOEbWFcjnXc7U9GkULPhupHZNAbqru9dS3c+4ANYAwtFoVAWuVuMVDH0DIy4ESp",
         },
+        {
+            "url": "https://unpkg.com/leaflet-providers@1.5.0/leaflet-providers.js",
+            "sri": "sha384-qhl5cJzmX1MC4ZSbS53PTNBbfAtxKk0JUsp0IyB5b1T2Fm/QGvdwImgD5AuYtFBu"
+        },
         "/-/static-plugins/datasette_cluster_map/datasette-cluster-map.js",
     ]
 
@@ -48,5 +52,11 @@ def extra_body_script(template, database, table, datasette):
                 "window.DATASETTE_CLUSTER_MAP_{}_COLUMN = '{}';".format(
                     key.upper(), column_name
                 )
+            )
+            
+    leaflet_tile_provider = config.get("leaflet_tile_provider")
+    if leaflet_tile_provider:
+            js.append(
+                "window.DATASETTE_CLUSTER_MAP_LEAFLET_TILE_PROVIDER = '{}';".format(leaflet_tile_provider)
             )
     return "\n".join(js)

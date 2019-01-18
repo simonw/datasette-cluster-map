@@ -17,12 +17,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         if (latitudeColumn && longitudeColumn) {
-            addClusterMap(latitudeColumn, longitudeColumn);
+
+            leafletTileProvider = window.DATASETTE_CLUSTER_MAP_LEAFLET_TILE_PROVIDER || 'OpenStreetMap.Mapnik'
+            addClusterMap(latitudeColumn, longitudeColumn, leafletTileProvider);
         }
     }
 });
 
-const addClusterMap = (latitudeColumn, longitudeColumn) => {
+const addClusterMap = (latitudeColumn, longitudeColumn, leafletTileProvider) => {
     let keepGoing = false;
 
     const loadMarkers = (path, map, markerClusterGroup, progressDiv, count) => {
@@ -108,11 +110,7 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
     let el = document.createElement('div');
     el.style.width = '100%';
     el.style.height = '500px';
-    let tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        detectRetina: true,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }),
+    let tiles = L.tileLayer.provider(leafletTileProvider);
     latlng = L.latLng(0, 0);
     let map = L.map(el, {
         //center: latlng,
