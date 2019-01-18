@@ -24,3 +24,21 @@ def extra_js_urls():
         "url": "https://unpkg.com/leaflet.markercluster@1.3.0/dist/leaflet.markercluster-src.js",
         "sri": "sha384-NAOEbWFcjnXc7U9GkULPhupHZNAbqru9dS3c+4ANYAwtFoVAWuVuMVDH0DIy4ESp"
     }, "/-/static-plugins/datasette_cluster_map/datasette-cluster-map.js"]
+
+
+@hookimpl
+def extra_body_script(template, database, table, datasette):
+    config = (
+        datasette.plugin_config("datasette-cluster-map", database=database, table=table)
+        or {}
+    )
+    js = []
+    for key in ("latitude", "longitude"):
+        column_name = config.get("{}_column".format(key))
+        if column_name:
+            js.append(
+                "window.DATASETTE_CLUSTER_MAP_{}_COLUMN = '{}';".format(
+                    key.upper(), column_name
+                )
+            )
+    return "\n".join(js)

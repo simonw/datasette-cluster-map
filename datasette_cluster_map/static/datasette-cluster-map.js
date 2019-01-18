@@ -4,17 +4,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Does it have Latitude and Longitude columns?
         let columns = Array.prototype.map.call(
             document.querySelectorAll('table.rows-and-columns th'),
-            (th) => {
-                return th.className.replace(/^col\-/, '')
-            }
+            (th) => th.textContent.trim()
         );
         let latitudeColumn = null;
         let longitudeColumn = null;
         columns.forEach((col) => {
-            if (col.toLowerCase() == 'latitude') {
+            if (col.toLowerCase() == (window.DATASETTE_CLUSTER_MAP_LATITUDE_COLUMN || 'latitude').toLowerCase()) {
                 latitudeColumn = col;
             }
-            if (col.toLowerCase() == 'longitude') {
+            if (col.toLowerCase() == (window.DATASETTE_CLUSTER_MAP_LONGITUDE_COLUMN || 'longitude').toLowerCase()) {
                 longitudeColumn = col;
             }
         });
