@@ -93,3 +93,16 @@ To set the tile provider, you can edit the metadata.json like so:
 
 The default tile provider name is "OpenStreetMap.Mapnik" which then uses the https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png tiles.
 
+## Controlling map zoom behaviour
+
+By default when scrolling down the page to view the table, the map will capture the mouse scrollwheel events and start zooming. You can override this behaviour such that the map only zooms on scroll after you have clicked on the map.
+
+    {
+        "title": "Regular metadata keys can go here too",
+        "plugins": {
+            "datasette-cluster-map": {
+                "leaflet_zoom_on_click": "True"
+            }
+        }
+    }
+

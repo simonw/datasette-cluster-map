@@ -19,12 +19,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (latitudeColumn && longitudeColumn) {
 
             leafletTileProvider = window.DATASETTE_CLUSTER_MAP_LEAFLET_TILE_PROVIDER || 'OpenStreetMap.Mapnik'
-            addClusterMap(latitudeColumn, longitudeColumn, leafletTileProvider);
+            leafletZoomOnClick = window.DATASETTE_CLUSTER_MAP_LEAFLET_ZOOM_ON_CLICK || false
+            addClusterMap(latitudeColumn, longitudeColumn, leafletTileProvider, leafletZoomOnClick);
         }
     }
 });
 
-const addClusterMap = (latitudeColumn, longitudeColumn, leafletTileProvider) => {
+const addClusterMap = (latitudeColumn, longitudeColumn, leafletTileProvider, leafletZoomOnClick) => {
     let keepGoing = false;
 
     const loadMarkers = (path, map, markerClusterGroup, progressDiv, count) => {
@@ -117,6 +118,11 @@ const addClusterMap = (latitudeColumn, longitudeColumn, leafletTileProvider) => 
         zoom: 13,
         layers: [tiles]
     });
+    if (leafletZoomOnClick) {
+        map.scrollWheelZoom.disable();
+        map.on('focus', () => { map.scrollWheelZoom.enable(); });
+        map.on('blur', () => { map.scrollWheelZoom.disable(); });
+    }
     let table = document.querySelector('table.rows-and-columns');
     table.parentNode.insertBefore(el, table);
     let progressDiv = document.createElement('div');

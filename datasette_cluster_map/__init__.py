@@ -56,7 +56,13 @@ def extra_body_script(template, database, table, datasette):
             
     leaflet_tile_provider = config.get("leaflet_tile_provider")
     if leaflet_tile_provider:
-            js.append(
-                "window.DATASETTE_CLUSTER_MAP_LEAFLET_TILE_PROVIDER = '{}';".format(leaflet_tile_provider)
-            )
+        js.append(
+            "window.DATASETTE_CLUSTER_MAP_LEAFLET_TILE_PROVIDER = '{}';".format(leaflet_tile_provider)
+        )
+
+    leaflet_zoom_on_click = config.get("leaflet_zoom_on_click")
+    if leaflet_zoom_on_click:
+        js.append(
+            "window.DATASETTE_CLUSTER_MAP_LEAFLET_ZOOM_ON_CLICK = '{}';".format(leaflet_zoom_on_click)
+        )
     return "\n".join(js)
