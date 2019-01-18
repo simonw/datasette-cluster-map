@@ -34,16 +34,35 @@ const addClusterMap = (latitudeColumn, longitudeColumn, leafletTileProvider, lea
             let markerList = [];
             data.rows.forEach((row) => {
                 if (row[latitudeColumn] && row[longitudeColumn]) {
-                    let title = JSON.stringify(row, null, 4);
-                    let marker = L.marker(
-                        L.latLng(
-                            row[latitudeColumn],
-                            row[longitudeColumn]
-                        ),
-                        {title: title}
-                    );
-                    marker.bindPopup('<pre style="height: 200px; overflow: auto">' + title + '</pre>');
-                    markerList.push(marker);
+                    if (row['url'] && row['icao'] && row['elevation'] && row['latitude'] && row['longitude']) {
+                        let marker = L.marker(
+                            L.latLng(
+                                row[latitudeColumn],
+                                row[longitudeColumn]
+                            ),
+                            {title: row['name']}
+                        );
+                        var info = '<a href="' + row['url'] + '">' + row['name'] + '</a><br>'
+                        info += 'ICAO: ' + row['icao'] + '<br>IATA: ' + row['iata'] + '<br>'
+                        info += 'Elevation: ' + row['elevation'] + ' ft<br>'
+                        info += 'Old ICAO: ' + row['old_icao'] + '<br>'
+                        info += 'Regional Code: ' + row['regional_code'] + '<br>'
+                        var gmap = 'https://maps.google.com/maps?ll=' + row['latitude'] + ',' + row['longitude'] + '&hl=en&t=h&z=15'
+                        info += 'Location: <a href="' + gmap + '">' + row['latitude'] + ',' + row['longitude'] + '</a><br>'
+                        marker.bindPopup('<b style="height: 200px; overflow: auto">' + info + '</b>');
+                        markerList.push(marker);
+                    } else {
+                        let title = JSON.stringify(row, null, 4);
+                        let marker = L.marker(
+                            L.latLng(
+                                row[latitudeColumn],
+                                row[longitudeColumn]
+                            ),
+                            {title: title}
+                        );
+                        marker.bindPopup('<pre style="height: 200px; overflow: auto">' + title + '</pre>');
+                        markerList.push(marker);
+                    }
                 }
             });
             count += data.rows.length;
