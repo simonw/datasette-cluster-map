@@ -70,10 +70,8 @@ You can also use a custom SQL query to rename those columns to `latitude` and `l
 
 ## How I deployed the demo
 
-I deploy this demo using the latest master versions of both datasette and datasette-cluster-map like so:
-
-    datasette publish now --branch=master \
-        --install=https://github.com/simonw/datasette-cluster-map/archive/master.zip \
-        --extra-options "--page_size=500" \
+    datasette publish now \
+        --install=datasette-cluster-map \
         --name="datasette-cluster-map-demo" \
+        --alias="datasette-cluster-map-demo.datasettes.com" \
         polar-bears.db sf-trees.db
