@@ -34,7 +34,7 @@ const addClusterMap = (latitudeColumn, longitudeColumn, leafletTileProvider, lea
             let markerList = [];
             data.rows.forEach((row) => {
                 if (row[latitudeColumn] && row[longitudeColumn]) {
-                    if (row['url'] && row['icao'] && row['elevation'] && row['latitude'] && row['longitude']) {
+                    if (row['url'] && row['name'] && row['elevation'] && row['latitude'] && row['longitude']) {
                         let marker = L.marker(
                             L.latLng(
                                 row[latitudeColumn],
@@ -47,6 +47,7 @@ const addClusterMap = (latitudeColumn, longitudeColumn, leafletTileProvider, lea
                         info += 'Elevation: ' + row['elevation'] + ' ft<br>'
                         info += 'Old ICAO: ' + row['old_icao'] + '<br>'
                         info += 'Regional Code: ' + row['regional_code'] + '<br>'
+                        info += 'Closed Date: ' + row['closed_date'] + '<br>'
                         var gmap = 'https://maps.google.com/maps?ll=' + row['latitude'] + ',' + row['longitude'] + '&hl=en&t=h&z=15'
                         info += 'Location: <a href="' + gmap + '">' + row['latitude'] + ',' + row['longitude'] + '</a><br>'
                         marker.bindPopup('<b style="height: 200px; overflow: auto">' + info + '</b>');
