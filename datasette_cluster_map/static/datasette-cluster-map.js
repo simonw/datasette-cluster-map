@@ -32,15 +32,47 @@ const addClusterMap = (latitudeColumn, longitudeColumn, leafletTileProvider, lea
         count = count || 0;
         return fetch(path).then(r => r.json()).then(data => {
             let markerList = [];
+
+            // None of these instructions seemed to work
+            // https://stackoverflow.com/questions/41590102/change-leaflet-marker-icon
+            // https://leafletjs.com/reference-1.4.0.html#icon-default
+
+            // Also tried this....
+            // https://github.com/pointhi/leaflet-color-markers
+            //var icon = L.Icon.Default.imagePath = 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/';
+            //var mainIcon = L.icon({
+            //    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+            //    shadowUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-shadow.png'
+
+            /*
+            // And this.....
+            //https://plnkr.co/edit/HBs6K6rddLbqRDLa3Ssi?p=preview
+            var icon = L.Icon.Default.imagePath = 'https://unilocal-372f.kxcdn.com/build/img/leaflet/';
+            var mainIcon = L.icon({
+                iconUrl: L.Icon.Default.imagePath + 'marker-icon.png',
+                shadowUrl: L.Icon.Default.imagePath + 'marker-shadow.png',
+                //iconSize:     [24, 32],
+                //shadowSize:   [41, 41],
+                //iconAnchor:   [12, 32],
+                //shadowAnchor: [14, 41],
+                //popupAnchor:  [0, -32]
+            });
+
+            //var this_org_mark = L.marker([57.7, 11.9], {icon: mainIcon}).addTo(map);
+            //markerList.push(this_org_mark);
+            */
+
             data.rows.forEach((row) => {
                 if (row[latitudeColumn] && row[longitudeColumn]) {
                     if (row['url'] && row['name'] && row['elevation'] && row['latitude'] && row['longitude']) {
+
                         let marker = L.marker(
                             L.latLng(
                                 row[latitudeColumn],
                                 row[longitudeColumn]
                             ),
                             {title: row['name']}
+                            //{icon: mainIcon}
                         );
                         var info = '<a href="' + row['url'] + '">' + row['name'] + '</a><br>'
                         info += 'ICAO: ' + row['icao'] + '<br>IATA: ' + row['iata'] + '<br>'
@@ -66,6 +98,7 @@ const addClusterMap = (latitudeColumn, longitudeColumn, leafletTileProvider, lea
                     }
                 }
             });
+
             count += data.rows.length;
             markerClusterGroup.addLayers(markerList);
             map.fitBounds(markerClusterGroup.getBounds());
