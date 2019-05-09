@@ -131,9 +131,9 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
     map.addLayer(markerClusterGroup);
     let path = location.pathname + '.jsono' + location.search;
     if (path.indexOf('?') > -1) {
-        path += '&_size=max';
+        path += '&_size=max&_labels=on';
     } else {
-        path += '?_size=max';
+        path += '?_size=max&_labels=on';
     }
     loadMarkers(path, map, markerClusterGroup, progressDiv, 0);
 };
