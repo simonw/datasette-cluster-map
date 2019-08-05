@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    alert('EMMAS VERSION')
     // Only execute on table, query and row pages
     if (document.querySelector('body.table,body.row,body.query')) {
         // Does it have Latitude and Longitude columns?
