@@ -119,13 +119,8 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
         zoom: 13,
         layers: [tiles]
     });
-    const container = window.DATASETTE_CLUSTER_MAP_CONTAINER;
-    if (container && document.querySelector(container)) {
-        document.querySelector(container).appendChild(el);
-    } else {
-        let table = document.querySelector('table.rows-and-columns');
-        table.parentNode.insertBefore(el, table);
-    }
+    let table = document.querySelector('table.rows-and-columns');
+    table.parentNode.insertBefore(el, table);
     let progressDiv = document.createElement('div');
     progressDiv.style.marginBottom = '2em';
     el.parentNode.insertBefore(progressDiv, el.nextSibling);
