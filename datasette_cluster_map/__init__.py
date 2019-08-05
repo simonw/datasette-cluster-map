@@ -41,12 +41,13 @@ def extra_body_script(template, database, table, datasette):
         or {}
     )
     js = []
-    for key in ("latitude", "longitude"):
-        column_name = config.get("{}_column".format(key))
-        if column_name:
+    for key in ("latitude_column", "longitude_column", "container"):
+        value = config.get(key)
+        if value:
             js.append(
-                "window.DATASETTE_CLUSTER_MAP_{}_COLUMN = '{}';".format(
-                    key.upper(), column_name
+                "window.DATASETTE_CLUSTER_MAP_{} = '{}';".format(
+                    key.upper(), value
                 )
             )
     return "\n".join(js)
+    

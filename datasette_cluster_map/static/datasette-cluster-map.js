@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    alert('EMMAS VERSION')
     // Only execute on table, query and row pages
     if (document.querySelector('body.table,body.row,body.query')) {
         // Does it have Latitude and Longitude columns?
@@ -119,8 +120,13 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
         zoom: 13,
         layers: [tiles]
     });
-    let table = document.querySelector('table.rows-and-columns');
-    table.parentNode.insertBefore(el, table);
+    const container = window.DATASETTE_CLUSTER_MAP_CONTAINER;
+    if (container && document.querySelector(container)) {
+        document.querySelector(container).appendChild(el);
+    } else {
+        let table = document.querySelector('table.rows-and-columns');
+        table.parentNode.insertBefore(el, table);
+    }
     let progressDiv = document.createElement('div');
     progressDiv.style.marginBottom = '2em';
     el.parentNode.insertBefore(progressDiv, el.nextSibling);
