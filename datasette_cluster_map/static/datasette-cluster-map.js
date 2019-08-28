@@ -22,6 +22,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+let map;
+let markerClusterGroup;
+
+const refreshMap = () => {
+    map.invalidateSize();
+    map.fitBounds(markerClusterGroup.getBounds());
+};
+
 const addClusterMap = (latitudeColumn, longitudeColumn) => {
     let keepGoing = false;
 
@@ -114,7 +122,7 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }),
     latlng = L.latLng(0, 0);
-    let map = L.map(el, {
+    map = L.map(el, {
         //center: latlng,
         zoom: 13,
         layers: [tiles]
@@ -124,7 +132,7 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
     let progressDiv = document.createElement('div');
     progressDiv.style.marginBottom = '2em';
     el.parentNode.insertBefore(progressDiv, el.nextSibling);
-    let markerClusterGroup = L.markerClusterGroup({
+    markerClusterGroup = L.markerClusterGroup({
         chunkedLoading: true,
         maxClusterRadius: 50
     });
