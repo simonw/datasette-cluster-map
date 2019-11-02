@@ -1,6 +1,7 @@
 # datasette-cluster-map
 
 [![PyPI](https://img.shields.io/pypi/v/datasette-cluster-map.svg)](https://pypi.python.org/pypi/datasette-cluster-map)
+[![CircleCI](https://circleci.com/gh/simonw/datasette-cluster-map.svg?style=svg)](https://circleci.com/gh/simonw/datasette-cluster-map)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/simonw/datasette-cluster-map/blob/master/LICENSE)
 
 
