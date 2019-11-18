@@ -129,11 +129,11 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
         maxClusterRadius: 50
     });
     map.addLayer(markerClusterGroup);
-    let path = location.pathname + '.jsono' + location.search;
+    let path = location.pathname + '.json' + location.search;
     if (path.indexOf('?') > -1) {
-        path += '&_size=max&_labels=on';
+        path += '&_size=max&_labels=on&_shape=objects';
     } else {
-        path += '?_size=max&_labels=on';
+        path += '?_size=max&_labels=on&_shape=objects';
     }
     loadMarkers(path, map, markerClusterGroup, progressDiv, 0);
 };
