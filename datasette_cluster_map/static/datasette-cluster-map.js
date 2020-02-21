@@ -25,12 +25,16 @@ document.addEventListener('DOMContentLoaded', () => {
 const addClusterMap = (latitudeColumn, longitudeColumn) => {
     let keepGoing = false;
 
+    function isValid(latOrLon) {
+        return !isNaN(parseFloat(latOrLon));
+    }
+
     const loadMarkers = (path, map, markerClusterGroup, progressDiv, count) => {
         count = count || 0;
         return fetch(path).then(r => r.json()).then(data => {
             let markerList = [];
             data.rows.forEach((row) => {
-                if (row[latitudeColumn] && row[longitudeColumn]) {
+                if (isValid(row[latitudeColumn]) && isValid(row[longitudeColumn])) {
                     let title = JSON.stringify(row, null, 4);
                     let marker = L.marker(
                         L.latLng(
