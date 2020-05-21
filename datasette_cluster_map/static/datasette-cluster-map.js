@@ -33,12 +33,16 @@ const refreshMap = () => {
 const addClusterMap = (latitudeColumn, longitudeColumn) => {
     let keepGoing = false;
 
+    function isValid(latOrLon) {
+        return !isNaN(parseFloat(latOrLon));
+    }
+
     const loadMarkers = (path, map, markerClusterGroup, progressDiv, count) => {
         count = count || 0;
         return fetch(path).then(r => r.json()).then(data => {
             let markerList = [];
             data.rows.forEach((row) => {
-                if (row[latitudeColumn] && row[longitudeColumn]) {
+                if (isValid(row[latitudeColumn]) && isValid(row[longitudeColumn])) {
                     let title = JSON.stringify(row, null, 4);
                     let marker = L.marker(
                         L.latLng(
@@ -139,9 +143,9 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
     clusterMap.addLayer(markerClusterGroup);
     let path = location.pathname + '.jsono' + location.search;
     if (path.indexOf('?') > -1) {
-        path += '&_size=max&_labels=on';
+        path += '&_size=max&_labels=on&_shape=objects';
     } else {
-        path += '?_size=max&_labels=on';
+        path += '?_size=max&_labels=on&_shape=objects';
     }
     loadMarkers(path, map, markerClusterGroup, progressDiv, 0);
 };

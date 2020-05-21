@@ -1,6 +1,7 @@
 # datasette-cluster-map
 
 [![PyPI](https://img.shields.io/pypi/v/datasette-cluster-map.svg)](https://pypi.python.org/pypi/datasette-cluster-map)
+[![CircleCI](https://circleci.com/gh/simonw/datasette-cluster-map.svg?style=svg)](https://circleci.com/gh/simonw/datasette-cluster-map)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/simonw/datasette-cluster-map/blob/master/LICENSE)
 
 
@@ -10,9 +11,9 @@ More about this project: [Datasette plugins, and building a clustered map visual
 
 ## Demo
 
-[datasette-cluster-map-demo.datasettes.com](https://datasette-cluster-map-demo.datasettes.com/) hosts a demo of this plugin running against several different tables.
+[global-power-plants.datasettes.com](https://global-power-plants.datasettes.com/global-power-plants/global-power-plants) hosts a demo of this plugin running against a database of 33,000 power plants around the world.
 
-![Cluster map demo](https://static.simonwillison.net/static/2018/datasette-cluster-map.png)
+![Cluster map demo](https://static.simonwillison.net/static/2020/global-power-plants.png)
 
 ## Installation
 
@@ -20,7 +21,7 @@ Run `pip install datasette-cluster-map` to add this plugin to your Datasette vir
 
 If you are deploying using the `datasette publish` command you can use the `--install` option:
 
-    datasette publish now mydb.db --install=datasette-cluster-map
+    datasette publish cloudrun mydb.db --install=datasette-cluster-map
 
 If any of your tables have a `latitude` and `longitude` column, a map will be automatically displayed.
 
@@ -61,17 +62,17 @@ If you want to customize the column names for just one table in one database, yo
         }
     }
 
-You can also use a custom SQL query to rename those columns to `latitude` and `longitude`, [for example](https://datasette-cluster-map-demo.datasettes.com/polar-bears-455fe3a?sql=select+*%2C+%22Capture+Latitude%22+as+latitude%2C+%22Capture+Longitude%22+as+longitude+from+[USGS_WC_eartag_deployments_2009-2011]):
+You can also use a custom SQL query to rename those columns to `latitude` and `longitude`, [for example](https://polar-bears.now.sh/polar-bears?sql=select+*%2C%0D%0A++++%22Capture+Latitude%22+as+latitude%2C%0D%0A++++%22Capture+Longitude%22+as+longitude%0D%0Afrom+%5BUSGS_WC_eartag_deployments_2009-2011%5D):
 
     select *,
-      "Capture Latitude" as latitude,
-      "Capture Longitude" as longitude
+        "Capture Latitude" as latitude,
+        "Capture Longitude" as longitude
     from [USGS_WC_eartag_deployments_2009-2011]
 
 ## How I deployed the demo
 
-    datasette publish now \
+    datasette publish cloudrun global-power-plants.db \
+        --service global-power-plants \
+        --metadata metadata.json \
         --install=datasette-cluster-map \
-        --name="datasette-cluster-map-demo" \
-        --alias="datasette-cluster-map-demo.datasettes.com" \
-        polar-bears.db sf-trees.db
+        --extra-options="--config facet_time_limit_ms:1000"
