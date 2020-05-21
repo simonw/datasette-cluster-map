@@ -22,12 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-let map;
-let markerClusterGroup;
+let clusterMap;
+let clusterMapMarkerClusterGroup;
 
 const refreshMap = () => {
-    map.invalidateSize();
-    map.fitBounds(markerClusterGroup.getBounds());
+    clusterMap.invalidateSize();
+    clusterMap.fitBounds(clusterMapMarkerClusterGroup.getBounds());
 };
 
 const addClusterMap = (latitudeColumn, longitudeColumn) => {
@@ -122,7 +122,7 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }),
     latlng = L.latLng(0, 0);
-    map = L.map(el, {
+    clusterMap = L.map(el, {
         //center: latlng,
         zoom: 13,
         layers: [tiles]
@@ -136,7 +136,7 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
         chunkedLoading: true,
         maxClusterRadius: 50
     });
-    map.addLayer(markerClusterGroup);
+    clusterMap.addLayer(markerClusterGroup);
     let path = location.pathname + '.jsono' + location.search;
     if (path.indexOf('?') > -1) {
         path += '&_size=max&_labels=on';
