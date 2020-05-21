@@ -108,7 +108,7 @@ select json_object(
 where id in (26, 27) order by id
 ```
 
-[Try that example here](https://www.niche-museums.com/browse?sql=select+json_object%28%0D%0A++%27image%27%2C+photo_url+%7C%7C+%27%3Fw%3D800%26h%3D400%26fit%3Dcrop%27%2C%0D%0A++%27title%27%2C+name%2C%0D%0A++%27description%27%2C+substr%28description%2C+0%2C+200%29%2C%0D%0A++%27link%27%2C+%27%2Fbrowse%2Fmuseums%2F%27+%7C%7C+id%0D%0A++%29+as+popup%2C%0D%0A++latitude%2C+longitude+from+museums%0D%0Awhere+id+in+%2826%2C+27%29+order+by+id).
+[Try that example here](https://www.niche-museums.com/browse?sql=select+json_object%28%0D%0A++%27image%27%2C+photo_url+%7C%7C+%27%3Fw%3D800%26h%3D400%26fit%3Dcrop%27%2C%0D%0A++%27title%27%2C+name%2C%0D%0A++%27description%27%2C+substr%28description%2C+0%2C+200%29%2C%0D%0A++%27link%27%2C+%27%2Fbrowse%2Fmuseums%2F%27+%7C%7C+id%0D%0A++%29+as+popup%2C%0D%0A++latitude%2C+longitude+from+museums) or take a look at [this demo built using a SQL view](https://dogsheep-photos.dogsheep.net/public/photos_on_a_map).
 
 ## How I deployed the demo
 
