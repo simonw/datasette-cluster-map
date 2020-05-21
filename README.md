@@ -69,6 +69,47 @@ You can also use a custom SQL query to rename those columns to `latitude` and `l
         "Capture Longitude" as longitude
     from [USGS_WC_eartag_deployments_2009-2011]
 
+## Custom marker popups
+
+The marker popup defaults to showing a formatted JSON version of the underlying database row.
+
+You can customize this by including a `popup` column in your results containing JSON that defines a more useful popup.
+
+The JSON in the popup column should look something like this:
+
+```json
+{
+    "image": "https://niche-museums.imgix.net/dodgems.heic?w=800&h=400&fit=crop",
+    "alt": "Dingles Fairground Heritage Centre",
+    "title": "Dingles Fairground Heritage Centre",
+    "description": "Home of the National Fairground Collection, Dingles has over 45,000 indoor square feet of vintage fairground rides... and you can go on them! Highlights include the last complete surviving and opera",
+    "link": "/browse/museums/26"
+}
+```
+
+Each of these columns is optional.
+
+- `title` is the title to show at the top of the popup
+- `image` is the URL to an image to display in the popup
+- `alt` is the alt attribute to use for that image
+- `description` is a longer string of text to use as a description
+- `link` is a URL that the marker content should link to
+
+You can use the SQLite `json_object()` function to construct this data dynamically as part of your SQL query. Here's an example:
+
+```sql
+select json_object(
+  'image', photo_url || '?w=800&h=400&fit=crop',
+  'title', name,
+  'description', substr(description, 0, 200),
+  'link', '/browse/museums/' || id
+  ) as popup,
+  latitude, longitude from museums
+where id in (26, 27) order by id
+```
+
+[Try that example here](https://www.niche-museums.com/browse?sql=select+json_object%28%0D%0A++%27image%27%2C+photo_url+%7C%7C+%27%3Fw%3D800%26h%3D400%26fit%3Dcrop%27%2C%0D%0A++%27title%27%2C+name%2C%0D%0A++%27description%27%2C+substr%28description%2C+0%2C+200%29%2C%0D%0A++%27link%27%2C+%27%2Fbrowse%2Fmuseums%2F%27+%7C%7C+id%0D%0A++%29+as+popup%2C%0D%0A++latitude%2C+longitude+from+museums%0D%0Awhere+id+in+%2826%2C+27%29+order+by+id).
+
 ## How I deployed the demo
 
     datasette publish cloudrun global-power-plants.db \

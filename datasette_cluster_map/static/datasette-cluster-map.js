@@ -22,6 +22,64 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+const clusterMapEscapeHTML = (s) => s.replace(
+    /&/g, "&amp;"
+).replace(
+    /</g, "&lt;"
+).replace(
+    />/g, "&gt;"
+).replace(
+    /"/g, "&quot;"
+).replace(
+    /'/g, "&#039;"
+);
+
+const clusterMapMarkerContent = (row) => {
+    // if row has popup, use that
+    let popup = row.popup;
+    if (popup) {
+        // It may be JSON or a string
+        if ((typeof popup) === 'string') {
+            try {
+                popup = JSON.parse(popup);
+            } catch (e) {
+                popup = {};
+            }
+        }
+        if (popup.image || popup.title || popup.description || popup.link) {
+            // We have a valid popup configuration - render that
+            let html = [];
+            if (popup.link) {
+                html.push('<a href="' + clusterMapEscapeHTML(popup.link) + '">');
+            }
+            if (popup.title) {
+                html.push('<p><strong>' + clusterMapEscapeHTML(popup.title) + '</strong></p>');
+            }
+            if (popup.image) {
+                html.push('<img style="max-width: 100%" src="' + clusterMapEscapeHTML(popup.image) + '"');
+                if (popup.alt) {
+                    html.push(' alt="' + clusterMapEscapeHTML(popup.alt) + '"');
+                }
+                html.push('>');
+            }
+            if (popup.description) {
+                html.push('<p style="text-decoration: none; color: black;">' + clusterMapEscapeHTML(popup.description) + '</p>');
+            }
+            if (popup.link) {
+                html.push('</a>');
+            }
+            return html.join('');
+        }
+    }
+    // Otherwise, use JSON.stringify
+    return (
+        '<pre style="height: 200px; overflow: auto">' +
+        clusterMapEscapeHTML(JSON.stringify(row, null, 4)) +
+        '</pre>'
+    );
+};
+
+
 const addClusterMap = (latitudeColumn, longitudeColumn) => {
     let keepGoing = false;
 
@@ -35,15 +93,14 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
             let markerList = [];
             data.rows.forEach((row) => {
                 if (isValid(row[latitudeColumn]) && isValid(row[longitudeColumn])) {
-                    let title = JSON.stringify(row, null, 4);
+                    let markerContent = clusterMapMarkerContent(row);
                     let marker = L.marker(
                         L.latLng(
                             row[latitudeColumn],
                             row[longitudeColumn]
-                        ),
-                        {title: title}
+                        )
                     );
-                    marker.bindPopup('<pre style="height: 200px; overflow: auto">' + title + '</pre>');
+                    marker.bindPopup(markerContent);
                     markerList.push(marker);
                 }
             });
