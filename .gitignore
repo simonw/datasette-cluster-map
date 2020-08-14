@@ -1,4 +1,10 @@
-*.pyc
-__pycache__
-dist
+.venv
+__pycache__/
+*.py[cod]
+*$py.class
+venv
+.eggs
+.pytest_cache
 *.egg-info
+.DS_Store
+.vscode
