@@ -178,7 +178,8 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
     let map = L.map(el, {
         //center: latlng,
         zoom: 13,
-        layers: [tiles]
+        layers: [tiles],
+        urlHash: DATASETTE_CLUSTER_MAP_URL_HASH
     });
     let table = document.querySelector('table.rows-and-columns');
     table.parentNode.insertBefore(el, table);
