@@ -1,4 +1,13 @@
 from datasette import hookimpl
+import json
+
+
+TILE_LAYER = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+TILE_LAYER_OPTIONS = {
+    "maxZoom": 19,
+    "detectRetina": True,
+    "attribution": '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+}
 
 
 @hookimpl
@@ -41,13 +50,20 @@ def extra_body_script(template, database, table, datasette):
         or {}
     )
     js = []
+    js.append(
+        "window.DATASETTE_CLUSTER_MAP_TILE_LAYER = {};".format(
+            json.dumps(config.get("tile_layer") or TILE_LAYER)
+        )
+    )
+    js.append(
+        "window.DATASETTE_CLUSTER_MAP_TILE_LAYER_OPTIONS = {};".format(
+            json.dumps(config.get("tile_layer_options") or TILE_LAYER_OPTIONS)
+        )
+    )
     for key in ("latitude_column", "longitude_column", "container"):
         value = config.get(key)
         if value:
             js.append(
-                "window.DATASETTE_CLUSTER_MAP_{} = '{}';".format(
-                    key.upper(), value
-                )
+                "window.DATASETTE_CLUSTER_MAP_{} = '{}';".format(key.upper(), value)
             )
     return "\n".join(js)
-    

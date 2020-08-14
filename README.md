@@ -17,7 +17,7 @@ More about this project: [Datasette plugins, and building a clustered map visual
 
 ## Installation
 
-Run `pip install datasette-cluster-map` to add this plugin to your Datasette virtual environment. Datasette will automatically load the plugin if it is installed in this way.
+Run `datasette install datasette-cluster-map` to add this plugin to your Datasette virtual environment. Datasette will automatically load the plugin if it is installed in this way.
 
 If you are deploying using the `datasette publish` command you can use the `--install` option:
 
@@ -25,17 +25,21 @@ If you are deploying using the `datasette publish` command you can use the `--in
 
 If any of your tables have a `latitude` and `longitude` column, a map will be automatically displayed.
 
+## Configuration
+
 If your columns are called something else you can configure the column names using [plugin configuration](https://datasette.readthedocs.io/en/stable/plugins.html#plugin-configuration) in a `metadata.json` file. For example, if all of your columns are called `xlat` and `xlng` you can create a `metadata.json` file like this:
 
-    {
-        "title": "Regular metadata keys can go here too",
-        "plugins": {
-            "datasette-cluster-map": {
-                "latitude_column": "xlat",
-                "longitude_column": "xlng"
-            }
+```json
+{
+    "title": "Regular metadata keys can go here too",
+    "plugins": {
+        "datasette-cluster-map": {
+            "latitude_column": "xlat",
+            "longitude_column": "xlng"
         }
     }
+}
+```
 
 Then run Datasette like this:
 
@@ -45,29 +49,55 @@ This will configure the required column names for every database loaded by that 
 
 If you want to customize the column names for just one table in one database, you can do something like this:
 
-    {
-        "databases": {
-            "polar-bears": {
-                "tables": {
-                    "USGS_WC_eartag_deployments_2009-2011": {
-                        "plugins": {
-                            "datasette-cluster-map": {
-                                "latitude_column": "Capture Latitude",
-                                "longitude_column": "Capture Longitude"
-                            }
+```json
+{
+    "databases": {
+        "polar-bears": {
+            "tables": {
+                "USGS_WC_eartag_deployments_2009-2011": {
+                    "plugins": {
+                        "datasette-cluster-map": {
+                            "latitude_column": "Capture Latitude",
+                            "longitude_column": "Capture Longitude"
                         }
                     }
                 }
             }
         }
     }
+}
+```
 
 You can also use a custom SQL query to rename those columns to `latitude` and `longitude`, [for example](https://polar-bears.now.sh/polar-bears?sql=select+*%2C%0D%0A++++%22Capture+Latitude%22+as+latitude%2C%0D%0A++++%22Capture+Longitude%22+as+longitude%0D%0Afrom+%5BUSGS_WC_eartag_deployments_2009-2011%5D):
 
-    select *,
-        "Capture Latitude" as latitude,
-        "Capture Longitude" as longitude
-    from [USGS_WC_eartag_deployments_2009-2011]
+```sql
+select *,
+    "Capture Latitude" as latitude,
+    "Capture Longitude" as longitude
+from [USGS_WC_eartag_deployments_2009-2011]
+```
+
+## Custom tile layers
+
+You can customize the tile layer used  by the maps using the `tile_layer` and `tile_layer_options` configuration settings. For example, to use the [Stamen Watercolor tiles](http://maps.stamen.com/watercolor/#12/37.7706/-122.3782) you can use these settings:
+
+```json
+{
+    "plugins": {
+        "datasette-cluster-map": {
+            "tile_layer": "https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}",
+            "tile_layer_options": {
+                "attribution": "Map tiles by <a href=\"http://stamen.com\">Stamen Design</a>, <a href=\"http://creativecommons.org/licenses/by/3.0\">CC BY 3.0</a> &mdash; Map data &copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
+                "subdomains": "abcd",
+                "minZoom": 1,
+                "maxZoom": 16,
+                "ext": "jpg"
+            }
+        }
+    }
+}
+```
+The [Leaflet Providers preview list](https://leaflet-extras.github.io/leaflet-providers/preview/index.html) has details of many other tile layers you can use.
 
 ## Custom marker popups
 
