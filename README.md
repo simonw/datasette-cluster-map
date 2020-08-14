@@ -4,7 +4,6 @@
 [![CircleCI](https://circleci.com/gh/simonw/datasette-cluster-map.svg?style=svg)](https://circleci.com/gh/simonw/datasette-cluster-map)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/simonw/datasette-cluster-map/blob/main/LICENSE)
 
-
 A [Datasette plugin](http://datasette.readthedocs.io/en/latest/plugins.html) that detects tables with `latitude` and `longitude` columns and then plots them on a map using [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster).
 
 More about this project: [Datasette plugins, and building a clustered map visualization](https://simonwillison.net/2018/Apr/20/datasette-plugins/)
@@ -76,6 +75,8 @@ select *,
     "Capture Longitude" as longitude
 from [USGS_WC_eartag_deployments_2009-2011]
 ```
+
+The map defaults to being displayed above the main results table on the page. You can use the `"container"` plugin setting to provide a CSS selector indicating an element that the map should be appended to instead.
 
 ## Custom tile layers
 
