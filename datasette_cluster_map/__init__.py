@@ -64,6 +64,8 @@ def extra_body_script(template, database, table, datasette):
         value = config.get(key)
         if value:
             js.append(
-                "window.DATASETTE_CLUSTER_MAP_{} = '{}';".format(key.upper(), value)
+                "window.DATASETTE_CLUSTER_MAP_{} = {};".format(
+                    key.upper(), json.dumps(value)
+                )
             )
     return "\n".join(js)

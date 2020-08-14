@@ -30,6 +30,6 @@ setup(
     entry_points={"datasette": ["cluster_map = datasette_cluster_map"]},
     package_data={"datasette_cluster_map": ["static/datasette-cluster-map.js"]},
     install_requires=["datasette"],
-    extras_require={"test": ["pytest", "pytest-asyncio", "httpx"]},
+    extras_require={"test": ["pytest", "pytest-asyncio", "httpx", "sqlite-utils"]},
     tests_require=["datasette-cluster-map[test]"],
 )
