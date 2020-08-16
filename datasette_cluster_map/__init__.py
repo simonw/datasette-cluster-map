@@ -11,7 +11,9 @@ TILE_LAYER_OPTIONS = {
 
 
 @hookimpl
-def extra_css_urls():
+def extra_css_urls(database, table, columns, datasette):
+    if not has_columns(database, table, columns, datasette):
+        return []
     return [
         {
             "url": "https://unpkg.com/leaflet@1.5.1/dist/leaflet.css",
@@ -29,7 +31,9 @@ def extra_css_urls():
 
 
 @hookimpl
-def extra_js_urls():
+def extra_js_urls(database, table, columns, datasette):
+    if not has_columns(database, table, columns, datasette):
+        return []
     return [
         {
             "url": "https://unpkg.com/leaflet@1.5.1/dist/leaflet.js",
@@ -44,7 +48,9 @@ def extra_js_urls():
 
 
 @hookimpl
-def extra_body_script(template, database, table, datasette):
+def extra_body_script(database, table, columns, datasette):
+    if not has_columns(database, table, columns, datasette):
+        return []
     config = (
         datasette.plugin_config("datasette-cluster-map", database=database, table=table)
         or {}
@@ -69,3 +75,15 @@ def extra_body_script(template, database, table, datasette):
                 )
             )
     return "\n".join(js)
+
+
+def has_columns(database, table, columns, datasette):
+    if not columns:
+        return False
+    config = (
+        datasette.plugin_config("datasette-cluster-map", database=database, table=table)
+        or {}
+    )
+    latitude_column = config.get("latitude_column") or "latitude"
+    longitude_column = config.get("longitude_column") or "longitude"
+    return latitude_column in columns and longitude_column in columns

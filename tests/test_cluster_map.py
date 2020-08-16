@@ -29,15 +29,21 @@ def db_path(tmp_path_factory):
         ],
         pk="id",
     )
+    db.create_view(
+        "places_lat_lng",
+        "select id, name, address, latitude as lat, longitude as lng from places",
+    )
+    db["dogs"].insert({"id": 1, "name": "Cleq"}, pk="id")
     return db_path
 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "config,expected_fragments",
+    "config,table,expected_fragments",
     [
         (
             {},
+            "places",
             [
                 'window.DATASETTE_CLUSTER_MAP_TILE_LAYER = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"'
             ],
@@ -46,6 +52,7 @@ def db_path(tmp_path_factory):
             {
                 "tile_layer": "https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}"
             },
+            "places",
             [
                 'window.DATASETTE_CLUSTER_MAP_TILE_LAYER = "https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}"'
             ],
@@ -55,6 +62,7 @@ def db_path(tmp_path_factory):
                 "tile_layer": "https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}",
                 "tile_layer_options": {"minZoom": 1, "maxZoom": 16},
             },
+            "places",
             [
                 'window.DATASETTE_CLUSTER_MAP_TILE_LAYER = "https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}"',
                 'window.DATASETTE_CLUSTER_MAP_TILE_LAYER_OPTIONS = {"minZoom": 1, "maxZoom": 16};',
@@ -66,6 +74,7 @@ def db_path(tmp_path_factory):
                 "longitude_column": "lng",
                 "container": "#map-goes-here",
             },
+            "places_lat_lng",
             [
                 'window.DATASETTE_CLUSTER_MAP_LATITUDE_COLUMN = "lat";',
                 'window.DATASETTE_CLUSTER_MAP_LONGITUDE_COLUMN = "lng";',
@@ -74,15 +83,42 @@ def db_path(tmp_path_factory):
         ),
     ],
 )
-async def test_plugin_config(db_path, config, expected_fragments):
+async def test_plugin_config(db_path, config, table, expected_fragments):
     app = Datasette(
         [db_path], metadata={"plugins": {"datasette-cluster-map": config}}
     ).app()
     async with httpx.AsyncClient(app=app) as client:
-        response = await client.get("http://localhost/test/places")
+        response = await client.get("http://localhost/test/{}".format(table))
         assert response.status_code == 200
         for fragment in expected_fragments:
             assert fragment in response.text
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "path,should_have_javascript",
+    [
+        ("/", False),
+        ("/test", False),
+        ("/-/config", False),
+        ("/test/dogs", False),
+        ("/test/places", True),
+    ],
+)
+async def test_plugin_only_on_tables_with_columns(
+    db_path, path, should_have_javascript
+):
+    app = Datasette([db_path]).app()
+    fragments = ("/datasette-cluster-map.js", "window.DATASETTE_CLUSTER_MAP_TILE_LAYER")
+    async with httpx.AsyncClient(app=app) as client:
+        response = await client.get("http://localhost{}".format(path))
+        assert response.status_code == 200
+        if should_have_javascript:
+            for fragment in fragments:
+                assert fragment in response.text
+        else:
+            for fragment in fragments:
+                assert fragment not in response.text
 
 
 @pytest.mark.asyncio
@@ -99,11 +135,3 @@ async def test_plugin_is_installed():
         )
         assert response.status_code == 200
         assert "const clusterMapEscapeHTML" in response.text
-
-
-def test_extra_css_urls():
-    assert isinstance(extra_css_urls(), list)
-
-
-def test_extra_js_urls():
-    assert isinstance(extra_js_urls(), list)
