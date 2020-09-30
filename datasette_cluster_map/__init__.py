@@ -80,10 +80,11 @@ def extra_body_script(database, table, columns, datasette):
 def has_columns(database, table, columns, datasette):
     if not columns:
         return False
+    columns = [column.lower() for column in columns]
     config = (
         datasette.plugin_config("datasette-cluster-map", database=database, table=table)
         or {}
     )
     latitude_column = config.get("latitude_column") or "latitude"
     longitude_column = config.get("longitude_column") or "longitude"
-    return latitude_column in columns and longitude_column in columns
+    return latitude_column.lower() in columns and longitude_column.lower() in columns

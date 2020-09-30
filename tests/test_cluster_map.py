@@ -10,22 +10,30 @@ def db_path(tmp_path_factory):
     db_directory = tmp_path_factory.mktemp("dbs")
     db_path = db_directory / "test.db"
     db = sqlite_utils.Database(db_path)
+    places = [
+        {
+            "id": 1,
+            "name": "The Mystery Spot",
+            "address": "465 Mystery Spot Road, Santa Cruz, CA 95065",
+            "latitude": 37.0167,
+            "longitude": -122.0024,
+        },
+        {
+            "id": 2,
+            "name": "Winchester Mystery House",
+            "address": "525 South Winchester Boulevard, San Jose, CA 95128",
+            "latitude": 37.3184,
+            "longitude": -121.9511,
+        },
+    ]
     db["places"].insert_all(
+        places,
+        pk="id",
+    )
+    db["places_caps"].insert_all(
         [
-            {
-                "id": 1,
-                "name": "The Mystery Spot",
-                "address": "465 Mystery Spot Road, Santa Cruz, CA 95065",
-                "latitude": 37.0167,
-                "longitude": -122.0024,
-            },
-            {
-                "id": 2,
-                "name": "Winchester Mystery House",
-                "address": "525 South Winchester Boulevard, San Jose, CA 95128",
-                "latitude": 37.3184,
-                "longitude": -121.9511,
-            },
+            {"id": p["id"], "LATITUDE": p["latitude"], "LONGITUDE": p["longitude"]}
+            for p in places
         ],
         pk="id",
     )
@@ -103,6 +111,7 @@ async def test_plugin_config(db_path, config, table, expected_fragments):
         ("/-/config", False),
         ("/test/dogs", False),
         ("/test/places", True),
+        ("/test/places_caps", True),
     ],
 )
 async def test_plugin_only_on_tables_with_columns(
