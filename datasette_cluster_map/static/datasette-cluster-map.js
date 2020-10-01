@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Does it have Latitude and Longitude columns?
         let columns = Array.prototype.map.call(
             document.querySelectorAll('table.rows-and-columns th'),
-            (th) => th.textContent.trim()
+            (th) => (th.getAttribute('data-column') || th.textContent).trim()
         );
         let latitudeColumn = null;
         let longitudeColumn = null;
