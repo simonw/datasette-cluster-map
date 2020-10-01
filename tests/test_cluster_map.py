@@ -108,13 +108,15 @@ async def test_plugin_config(db_path, config, table, expected_fragments):
     [
         ("/", False),
         ("/test", False),
+        ("/test?sql=select+1+-+1;", False),
+        ("/test?sql=select+*+from+places;", True),
         ("/-/config", False),
         ("/test/dogs", False),
         ("/test/places", True),
         ("/test/places_caps", True),
     ],
 )
-async def test_plugin_only_on_tables_with_columns(
+async def test_plugin_only_on_tables_or_queries_with_columns(
     db_path, path, should_have_javascript
 ):
     app = Datasette([db_path]).app()

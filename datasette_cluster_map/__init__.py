@@ -11,8 +11,8 @@ TILE_LAYER_OPTIONS = {
 
 
 @hookimpl
-def extra_css_urls(database, table, columns, datasette):
-    if not has_columns(database, table, columns, datasette):
+def extra_css_urls(database, table, columns, view_name, datasette):
+    if not has_columns(database, table, columns, view_name, datasette):
         return []
     return [
         {
@@ -31,8 +31,8 @@ def extra_css_urls(database, table, columns, datasette):
 
 
 @hookimpl
-def extra_js_urls(database, table, columns, datasette):
-    if not has_columns(database, table, columns, datasette):
+def extra_js_urls(database, table, columns, view_name, datasette):
+    if not has_columns(database, table, columns, view_name, datasette):
         return []
     return [
         {
@@ -48,8 +48,8 @@ def extra_js_urls(database, table, columns, datasette):
 
 
 @hookimpl
-def extra_body_script(database, table, columns, datasette):
-    if not has_columns(database, table, columns, datasette):
+def extra_body_script(database, table, columns, view_name, datasette):
+    if not has_columns(database, table, columns, view_name, datasette):
         return []
     config = (
         datasette.plugin_config("datasette-cluster-map", database=database, table=table)
@@ -77,7 +77,9 @@ def extra_body_script(database, table, columns, datasette):
     return "\n".join(js)
 
 
-def has_columns(database, table, columns, datasette):
+def has_columns(database, table, columns, view_name, datasette):
+    if view_name not in ("database", "table"):
+        return False
     if not columns:
         return False
     columns = [column.lower() for column in columns]
