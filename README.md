@@ -102,7 +102,7 @@ The [Leaflet Providers preview list](https://leaflet-extras.github.io/leaflet-pr
 
 ## Custom marker popups
 
-The marker popup defaults to showing a formatted JSON version of the underlying database row.
+The marker popup defaults to displaying the data for the underlying database row.
 
 You can customize this by including a `popup` column in your results containing JSON that defines a more useful popup.
 
