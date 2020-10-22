@@ -205,7 +205,7 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
     if (container && document.querySelector(container)) {
         document.querySelector(container).appendChild(el);
     } else {
-        let table = document.querySelector('table.rows-and-columns');
+        let table = document.querySelector('.table-wrapper') || document.querySelector('table.rows-and-columns');
         table.parentNode.insertBefore(el, table);
     }
     let progressDiv = document.createElement('div');
