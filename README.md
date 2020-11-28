@@ -153,7 +153,7 @@ where id in (26, 27) order by id
 
 To set up this plugin locally, first checkout the code. Then create a new virtual environment:
 
-    cd datasette-{{ cookiecutter.hyphenated }}
+    cd datasette-cluster-map
     python3 -mvenv venv
     source venv/bin/activate
 
