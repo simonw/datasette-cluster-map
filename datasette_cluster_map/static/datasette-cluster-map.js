@@ -67,6 +67,11 @@ const clusterMapMarkerContent = (row) => {
                 popup = {};
             }
         }
+        if (popup.html) {
+            // We have received HTML - render that as is
+            // WARNING - does not escape HTML, as a feature.
+            return popup.html
+        }
         if (popup.image || popup.title || popup.description || popup.link) {
             // We have a valid popup configuration - render that
             let html = [];
