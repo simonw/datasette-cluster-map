@@ -1,9 +1,16 @@
 const clusterMapCSS = `
+dl.cluster-map-dl {
+    font-size: 1.1em;
+}
 dl.cluster-map-dl dt {
     font-weight: bold;
 }
 dl.cluster-map-dl dd {
     margin: 0px 0 0 0.7em;
+}
+dl.cluster-map-dl dd span {
+    color: #aaa;
+    font-size: 0.8em;
 }
 button.cluster-map-button {
     color: #fff;
@@ -94,11 +101,27 @@ const clusterMapMarkerContent = (row) => {
     }
     // Otherwise, use a <dl>
     const dl = document.createElement('dl');
+    console.log(row);
     Object.keys(row).forEach(key => {
         const dt = document.createElement('dt');
         dt.appendChild(document.createTextNode(key));
         const dd = document.createElement('dd');
-        dd.appendChild(document.createTextNode(row[key]));
+        let value = row[key];
+        let label = value;
+        let extra = null;
+        if (typeof value === 'object') {
+            if (value.label !== undefined && value.value !== undefined) {
+                label = value.label;
+                extra = document.createElement('span');
+                extra.appendChild(document.createTextNode(' ' + value.value));
+            } else {
+                label = JSON.stringify(value);
+            }
+        }
+        dd.appendChild(document.createTextNode(label));
+        if (extra) {
+            dd.appendChild(extra);
+        }
         dl.appendChild(dt);
         dl.appendChild(dd);
     });
