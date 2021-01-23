@@ -101,7 +101,6 @@ const clusterMapMarkerContent = (row) => {
     }
     // Otherwise, use a <dl>
     const dl = document.createElement('dl');
-    console.log(row);
     Object.keys(row).forEach(key => {
         const dt = document.createElement('dt');
         dt.appendChild(document.createTextNode(key));
@@ -110,7 +109,7 @@ const clusterMapMarkerContent = (row) => {
         let label = value;
         let extra = null;
         if (typeof value === 'object') {
-            if (value.label !== undefined && value.value !== undefined) {
+            if (value !== null && value.label !== undefined && value.value !== undefined) {
                 label = value.label;
                 extra = document.createElement('span');
                 extra.appendChild(document.createTextNode(' ' + value.value));
