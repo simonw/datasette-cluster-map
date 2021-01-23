@@ -146,3 +146,10 @@ async def test_plugin_is_installed():
         )
         assert response.status_code == 200
         assert "const clusterMapEscapeHTML" in response.text
+
+
+@pytest.mark.asyncio
+async def test_respects_base_url():
+    ds = Datasette([], memory=True, config={"base_url": "/foo/"})
+    response = await ds.client.get("/:memory:?sql=select+1+as+latitude,+2+as+longitude")
+    assert '<script src="/foo/-/static-plugins/datasette_cluster_map/datasette-cluster-map.js"></script>' in response.text
