@@ -55,7 +55,34 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
     if (latitudeColumn && longitudeColumn) {
-      addClusterMap(latitudeColumn, longitudeColumn);
+      // Load dependencies and then add the map
+      const loadDependencies = (callback) => {
+        let loaded = [];
+        function hasLoaded() {
+          loaded.push(this);
+          if (loaded.length == 3) {
+            callback();
+          }
+        }
+        let stylesheet = document.createElement("link");
+        stylesheet.setAttribute("rel", "stylesheet");
+        stylesheet.setAttribute("href", datasette.leaflet.CSS_URL);
+        stylesheet.onload = hasLoaded;
+        document.head.appendChild(stylesheet);
+        let stylesheet2 = document.createElement("link");
+        stylesheet2.setAttribute("rel", "stylesheet");
+        stylesheet2.setAttribute(
+          "href",
+          datasette.cluster_map.MARKERCLUSTER_CSS_URL
+        );
+        stylesheet2.onload = hasLoaded;
+        document.head.appendChild(stylesheet2);
+        // Leaflet needs to be loaded before Leaflet.clustermap
+        import(datasette.leaflet.JAVASCRIPT_URL).then(() => {
+            import(datasette.cluster_map.MARKERCLUSTER_URL).then(hasLoaded);
+        });
+      };
+      loadDependencies(() => addClusterMap(latitudeColumn, longitudeColumn));
     }
   }
 });

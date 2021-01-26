@@ -1,7 +1,8 @@
-from datasette_cluster_map import extra_css_urls, extra_js_urls
+from datasette_cluster_map import extra_js_urls
 from datasette.app import Datasette
 import pytest
 import sqlite_utils
+import textwrap
 
 
 @pytest.fixture(scope="session")
@@ -147,6 +148,12 @@ async def test_respects_base_url():
     ds = Datasette([], memory=True, config={"base_url": "/foo/"})
     response = await ds.client.get("/:memory:?sql=select+1+as+latitude,+2+as+longitude")
     assert (
-        '<script src="/foo/-/static-plugins/datasette_cluster_map/datasette-cluster-map.js"></script>'
+        textwrap.dedent(
+            """
+    datasette.cluster_map = {
+        MARKERCLUSTER_URL: '/foo/-/static-plugins/datasette-cluster-map/leaflet.markercluster.min.js',
+        MARKERCLUSTER_CSS_URL: '/foo/-/static-plugins/datasette-cluster-map/leaflet.markercluster.css'
+    };"""
+        ).strip()
         in response.text
     )
