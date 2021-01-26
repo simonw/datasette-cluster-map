@@ -26,223 +26,249 @@ button.cluster-map-button {
 }
 `;
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Only execute on table, query and row pages
-    if (document.querySelector('body.table,body.row,body.query')) {
-        // Does it have Latitude and Longitude columns?
-        let columns = Array.prototype.map.call(
-            document.querySelectorAll('table.rows-and-columns th'),
-            (th) => (th.getAttribute('data-column') || th.textContent).trim()
-        );
-        let latitudeColumn = null;
-        let longitudeColumn = null;
-        columns.forEach((col) => {
-            if (col.toLowerCase() == (window.DATASETTE_CLUSTER_MAP_LATITUDE_COLUMN || 'latitude').toLowerCase()) {
-                latitudeColumn = col;
-            }
-            if (col.toLowerCase() == (window.DATASETTE_CLUSTER_MAP_LONGITUDE_COLUMN || 'longitude').toLowerCase()) {
-                longitudeColumn = col;
-            }
-        });
-        if (latitudeColumn && longitudeColumn) {
-            addClusterMap(latitudeColumn, longitudeColumn);
-        }
+document.addEventListener("DOMContentLoaded", () => {
+  // Only execute on table, query and row pages
+  if (document.querySelector("body.table,body.row,body.query")) {
+    // Does it have Latitude and Longitude columns?
+    let columns = Array.prototype.map.call(
+      document.querySelectorAll("table.rows-and-columns th"),
+      (th) => (th.getAttribute("data-column") || th.textContent).trim()
+    );
+    let latitudeColumn = null;
+    let longitudeColumn = null;
+    columns.forEach((col) => {
+      if (
+        col.toLowerCase() ==
+        (
+          window.DATASETTE_CLUSTER_MAP_LATITUDE_COLUMN || "latitude"
+        ).toLowerCase()
+      ) {
+        latitudeColumn = col;
+      }
+      if (
+        col.toLowerCase() ==
+        (
+          window.DATASETTE_CLUSTER_MAP_LONGITUDE_COLUMN || "longitude"
+        ).toLowerCase()
+      ) {
+        longitudeColumn = col;
+      }
+    });
+    if (latitudeColumn && longitudeColumn) {
+      addClusterMap(latitudeColumn, longitudeColumn);
     }
+  }
 });
 
-const clusterMapEscapeHTML = (s) => s.replace(
-    /&/g, "&amp;"
-).replace(
-    /</g, "&lt;"
-).replace(
-    />/g, "&gt;"
-).replace(
-    /"/g, "&quot;"
-).replace(
-    /'/g, "&#039;"
-);
+const clusterMapEscapeHTML = (s) =>
+  s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 
 const clusterMapMarkerContent = (row) => {
-    // if row has popup, use that
-    let popup = row.popup;
-    if (popup) {
-        // It may be JSON or a string
-        if ((typeof popup) === 'string') {
-            try {
-                popup = JSON.parse(popup);
-            } catch (e) {
-                popup = {};
-            }
-        }
-        if (popup.image || popup.title || popup.description || popup.link) {
-            // We have a valid popup configuration - render that
-            let html = [];
-            if (popup.link) {
-                html.push('<a href="' + clusterMapEscapeHTML(popup.link) + '">');
-            }
-            if (popup.title) {
-                html.push('<p><strong>' + clusterMapEscapeHTML(popup.title) + '</strong></p>');
-            }
-            if (popup.image) {
-                html.push('<img style="max-width: 100%" src="' + clusterMapEscapeHTML(popup.image) + '"');
-                if (popup.alt) {
-                    html.push(' alt="' + clusterMapEscapeHTML(popup.alt) + '"');
-                }
-                html.push('>');
-            }
-            if (popup.description) {
-                html.push('<p style="text-decoration: none; color: black;">' + clusterMapEscapeHTML(popup.description) + '</p>');
-            }
-            if (popup.link) {
-                html.push('</a>');
-            }
-            return html.join('');
-        }
+  // if row has popup, use that
+  let popup = row.popup;
+  if (popup) {
+    // It may be JSON or a string
+    if (typeof popup === "string") {
+      try {
+        popup = JSON.parse(popup);
+      } catch (e) {
+        popup = {};
+      }
     }
-    // Otherwise, use a <dl>
-    const dl = document.createElement('dl');
-    Object.keys(row).forEach(key => {
-        const dt = document.createElement('dt');
-        dt.appendChild(document.createTextNode(key));
-        const dd = document.createElement('dd');
-        let value = row[key];
-        let label = value;
-        let extra = null;
-        if (typeof value === 'object') {
-            if (value !== null && value.label !== undefined && value.value !== undefined) {
-                label = value.label;
-                extra = document.createElement('span');
-                extra.appendChild(document.createTextNode(' ' + value.value));
-            } else {
-                label = JSON.stringify(value);
-            }
+    if (popup.image || popup.title || popup.description || popup.link) {
+      // We have a valid popup configuration - render that
+      let html = [];
+      if (popup.link) {
+        html.push('<a href="' + clusterMapEscapeHTML(popup.link) + '">');
+      }
+      if (popup.title) {
+        html.push(
+          "<p><strong>" + clusterMapEscapeHTML(popup.title) + "</strong></p>"
+        );
+      }
+      if (popup.image) {
+        html.push(
+          '<img style="max-width: 100%" src="' +
+            clusterMapEscapeHTML(popup.image) +
+            '"'
+        );
+        if (popup.alt) {
+          html.push(' alt="' + clusterMapEscapeHTML(popup.alt) + '"');
         }
-        dd.appendChild(document.createTextNode(label));
-        if (extra) {
-            dd.appendChild(extra);
-        }
-        dl.appendChild(dt);
-        dl.appendChild(dd);
-    });
-    return (
-        '<dl class="cluster-map-dl" style="height: 200px; overflow: auto">' + dl.innerHTML + '</dl>'
-    );
+        html.push(">");
+      }
+      if (popup.description) {
+        html.push(
+          '<p style="text-decoration: none; color: black;">' +
+            clusterMapEscapeHTML(popup.description) +
+            "</p>"
+        );
+      }
+      if (popup.link) {
+        html.push("</a>");
+      }
+      return html.join("");
+    }
+  }
+  // Otherwise, use a <dl>
+  const dl = document.createElement("dl");
+  Object.keys(row).forEach((key) => {
+    const dt = document.createElement("dt");
+    dt.appendChild(document.createTextNode(key));
+    const dd = document.createElement("dd");
+    let value = row[key];
+    let label = value;
+    let extra = null;
+    if (typeof value === "object") {
+      if (
+        value !== null &&
+        value.label !== undefined &&
+        value.value !== undefined
+      ) {
+        label = value.label;
+        extra = document.createElement("span");
+        extra.appendChild(document.createTextNode(" " + value.value));
+      } else {
+        label = JSON.stringify(value);
+      }
+    }
+    dd.appendChild(document.createTextNode(label));
+    if (extra) {
+      dd.appendChild(extra);
+    }
+    dl.appendChild(dt);
+    dl.appendChild(dd);
+  });
+  return (
+    '<dl class="cluster-map-dl" style="height: 200px; overflow: auto">' +
+    dl.innerHTML +
+    "</dl>"
+  );
 };
 
-
 const addClusterMap = (latitudeColumn, longitudeColumn) => {
-    let keepGoing = false;
+  let keepGoing = false;
 
-    let style = document.createElement('style');
-    style.innerText = clusterMapCSS;
-    document.head.appendChild(style);
+  let style = document.createElement("style");
+  style.innerText = clusterMapCSS;
+  document.head.appendChild(style);
 
-    function isValid(latOrLon) {
-        return !isNaN(parseFloat(latOrLon));
-    }
+  function isValid(latOrLon) {
+    return !isNaN(parseFloat(latOrLon));
+  }
 
-    const loadMarkers = (path, map, markerClusterGroup, progressDiv, count) => {
-        count = count || 0;
-        return fetch(path).then(r => r.json()).then(data => {
-            let markerList = [];
-            data.rows.forEach((row) => {
-                if (isValid(row[latitudeColumn]) && isValid(row[longitudeColumn])) {
-                    let markerContent = clusterMapMarkerContent(row);
-                    let marker = L.marker(
-                        L.latLng(
-                            row[latitudeColumn],
-                            row[longitudeColumn]
-                        )
-                    );
-                    marker.bindPopup(markerContent);
-                    markerList.push(marker);
-                }
-            });
-            count += data.rows.length;
-            markerClusterGroup.addLayers(markerList);
-            map.fitBounds(markerClusterGroup.getBounds());
-            let percent = '';
-            let button;
-            // Fix for http v.s. https
-            let next_url = data.next_url;
-            if (next_url && location.protocol == 'https:') {
-                next_url = next_url.replace(/^https?:/, 'https:');
-            }
-            if (next_url) {
-                percent = ` (${Math.round((count / data.filtered_table_rows_count * 100) * 100) / 100}%)`;
-                // Add a control to either continue loading or pause
-                button = document.createElement('button');
-                button.classList.add('cluster-map-button');
-                if (keepGoing) {
-                    button.innerHTML = 'pause';
-                    button.addEventListener('click', () => {
-                        keepGoing = false;
-                    });
-                } else {
-                    button.innerHTML = 'load all';
-                    button.addEventListener('click', () => {
-                        keepGoing = true;
-                        loadMarkers(
-                            next_url,
-                            map,
-                            markerClusterGroup,
-                            progressDiv,
-                            count,
-                            keepGoing
-                        );
-                    });
-                }
-                progressDiv.innerHTML = `Showing ${count.toLocaleString()} of ${data.filtered_table_rows_count.toLocaleString()}${percent} `;
-                if (button) {
-                    progressDiv.appendChild(button);
-                }
-            } else {
-                progressDiv.innerHTML = '';
-            }
-            if (next_url && keepGoing) {
-                return loadMarkers(
-                    next_url,
-                    map,
-                    markerClusterGroup,
-                    progressDiv,
-                    count
-                );
-            }
+  const loadMarkers = (path, map, markerClusterGroup, progressDiv, count) => {
+    count = count || 0;
+    return fetch(path)
+      .then((r) => r.json())
+      .then((data) => {
+        let markerList = [];
+        data.rows.forEach((row) => {
+          if (isValid(row[latitudeColumn]) && isValid(row[longitudeColumn])) {
+            let markerContent = clusterMapMarkerContent(row);
+            let marker = L.marker(
+              L.latLng(row[latitudeColumn], row[longitudeColumn])
+            );
+            marker.bindPopup(markerContent);
+            markerList.push(marker);
+          }
         });
-    };
+        count += data.rows.length;
+        markerClusterGroup.addLayers(markerList);
+        map.fitBounds(markerClusterGroup.getBounds());
+        let percent = "";
+        let button;
+        // Fix for http v.s. https
+        let next_url = data.next_url;
+        if (next_url && location.protocol == "https:") {
+          next_url = next_url.replace(/^https?:/, "https:");
+        }
+        if (next_url) {
+          percent = ` (${
+            Math.round((count / data.filtered_table_rows_count) * 100 * 100) /
+            100
+          }%)`;
+          // Add a control to either continue loading or pause
+          button = document.createElement("button");
+          button.classList.add("cluster-map-button");
+          if (keepGoing) {
+            button.innerHTML = "pause";
+            button.addEventListener("click", () => {
+              keepGoing = false;
+            });
+          } else {
+            button.innerHTML = "load all";
+            button.addEventListener("click", () => {
+              keepGoing = true;
+              loadMarkers(
+                next_url,
+                map,
+                markerClusterGroup,
+                progressDiv,
+                count,
+                keepGoing
+              );
+            });
+          }
+          progressDiv.innerHTML = `Showing ${count.toLocaleString()} of ${data.filtered_table_rows_count.toLocaleString()}${percent} `;
+          if (button) {
+            progressDiv.appendChild(button);
+          }
+        } else {
+          progressDiv.innerHTML = "";
+        }
+        if (next_url && keepGoing) {
+          return loadMarkers(
+            next_url,
+            map,
+            markerClusterGroup,
+            progressDiv,
+            count
+          );
+        }
+      });
+  };
 
-    let el = document.createElement('div');
-    el.style.width = '100%';
-    el.style.height = '500px';
-    let tiles = L.tileLayer(
-        window.DATASETTE_CLUSTER_MAP_TILE_LAYER,
-        window.DATASETTE_CLUSTER_MAP_TILE_LAYER_OPTIONS
-    ), latlng = L.latLng(0, 0);
-    let map = L.map(el, {
-        //center: latlng,
-        zoom: 13,
-        layers: [tiles]
-    });
-    const container = window.DATASETTE_CLUSTER_MAP_CONTAINER;
-    if (container && document.querySelector(container)) {
-        document.querySelector(container).appendChild(el);
-    } else {
-        let table = document.querySelector('.table-wrapper') || document.querySelector('table.rows-and-columns');
-        table.parentNode.insertBefore(el, table);
-    }
-    let progressDiv = document.createElement('div');
-    progressDiv.style.marginBottom = '2em';
-    el.parentNode.insertBefore(progressDiv, el.nextSibling);
-    let markerClusterGroup = L.markerClusterGroup({
-        chunkedLoading: true,
-        maxClusterRadius: 50
-    });
-    map.addLayer(markerClusterGroup);
-    let path = location.pathname + '.json' + location.search;
-    if (path.indexOf('?') > -1) {
-        path += '&_size=max&_labels=on&_shape=objects';
-    } else {
-        path += '?_size=max&_labels=on&_shape=objects';
-    }
-    loadMarkers(path, map, markerClusterGroup, progressDiv, 0);
+  let el = document.createElement("div");
+  el.style.width = "100%";
+  el.style.height = "500px";
+  let tiles = L.tileLayer(
+      window.DATASETTE_CLUSTER_MAP_TILE_LAYER,
+      window.DATASETTE_CLUSTER_MAP_TILE_LAYER_OPTIONS
+    ),
+    latlng = L.latLng(0, 0);
+  let map = L.map(el, {
+    //center: latlng,
+    zoom: 13,
+    layers: [tiles],
+  });
+  const container = window.DATASETTE_CLUSTER_MAP_CONTAINER;
+  if (container && document.querySelector(container)) {
+    document.querySelector(container).appendChild(el);
+  } else {
+    let table =
+      document.querySelector(".table-wrapper") ||
+      document.querySelector("table.rows-and-columns");
+    table.parentNode.insertBefore(el, table);
+  }
+  let progressDiv = document.createElement("div");
+  progressDiv.style.marginBottom = "2em";
+  el.parentNode.insertBefore(progressDiv, el.nextSibling);
+  let markerClusterGroup = L.markerClusterGroup({
+    chunkedLoading: true,
+    maxClusterRadius: 50,
+  });
+  map.addLayer(markerClusterGroup);
+  let path = location.pathname + ".json" + location.search;
+  if (path.indexOf("?") > -1) {
+    path += "&_size=max&_labels=on&_shape=objects";
+  } else {
+    path += "?_size=max&_labels=on&_shape=objects";
+  }
+  loadMarkers(path, map, markerClusterGroup, progressDiv, 0);
 };
