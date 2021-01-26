@@ -7,7 +7,7 @@ import sqlite_utils
 @pytest.fixture(scope="session")
 def db_path(tmp_path_factory):
     db_directory = tmp_path_factory.mktemp("dbs")
-    db_path = db_directory / "test.db"
+    db_path = str(db_directory / "test.db")
     db = sqlite_utils.Database(db_path)
     places = [
         {
