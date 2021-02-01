@@ -1,7 +1,7 @@
 from setuptools import setup
 import os
 
-VERSION = "0.17"
+VERSION = "0.17.1"
 
 
 def get_long_description():
@@ -34,7 +34,7 @@ setup(
             "static/*.css",
         ]
     },
-    install_requires=["datasette>=0.54", "datasette-leaflet>=0.2"],
+    install_requires=["datasette>=0.54", "datasette-leaflet>=0.2.2"],
     extras_require={"test": ["pytest", "pytest-asyncio", "httpx", "sqlite-utils"]},
     tests_require=["datasette-cluster-map[test]"],
 )
