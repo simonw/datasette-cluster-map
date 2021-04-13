@@ -111,7 +111,7 @@ const clusterMapMarkerContent = (row) => {
       // We have a valid popup configuration - render that
       let html = [];
       if (popup.link) {
-        html.push('<a href="' + clusterMapEscapeHTML(popup.link) + '">');
+        html.push('<a href="' + clusterMapEscapeHTML(popup.link) + '" target="_blank">');
       }
       if (popup.title) {
         html.push(
