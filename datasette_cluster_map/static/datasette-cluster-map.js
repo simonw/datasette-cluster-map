@@ -275,6 +275,7 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
     latlng = L.latLng(0, 0);
   let map = L.map(el, {
     //center: latlng,
+    tap: false,
     zoom: 13,
     layers: [tiles],
   });
