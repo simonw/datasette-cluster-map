@@ -25,6 +25,10 @@ setup(
         "Changelog": "https://github.com/simonw/datasette-cluster-map/releases",
     },
     license="Apache License, Version 2.0",
+    classifiers=[
+        "Framework :: Datasette",
+        "License :: OSI Approved :: Apache Software License"
+    ],
     version=VERSION,
     packages=["datasette_cluster_map"],
     entry_points={"datasette": ["cluster_map = datasette_cluster_map"]},
