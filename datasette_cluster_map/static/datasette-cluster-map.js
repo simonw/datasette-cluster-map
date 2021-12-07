@@ -185,8 +185,19 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
   style.innerText = clusterMapCSS;
   document.head.appendChild(style);
 
-  function isValid(latOrLon) {
-    return !isNaN(parseFloat(latOrLon));
+  function isValidLatitude(latitude) {
+    latitude = parseFloat(latitude);
+    if (isNaN(latitude)) {
+      return false;
+    }
+    return latitude >= -90 && latitude <= 90;
+  }
+  function isValidLongitude(longitude) {
+    longitude = parseFloat(longitude);
+    if (isNaN(longitude)) {
+      return false;
+    }
+    return longitude >= -180 && longitude <= 180;
   }
 
   const loadMarkers = (path, map, markerClusterGroup, progressDiv, count) => {
@@ -196,7 +207,7 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
       .then((data) => {
         let markerList = [];
         data.rows.forEach((row) => {
-          if (isValid(row[latitudeColumn]) && isValid(row[longitudeColumn])) {
+          if (isValidLatitude(row[latitudeColumn]) && isValidLongitude(row[longitudeColumn])) {
             let markerContent = clusterMapMarkerContent(row);
             let marker = L.marker(
               L.latLng(row[latitudeColumn], row[longitudeColumn])
