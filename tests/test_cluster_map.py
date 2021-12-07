@@ -107,7 +107,7 @@ async def test_plugin_config(db_path, config, table, expected_fragments):
         ("/test", False),
         ("/test?sql=select+1+-+1;", False),
         ("/test?sql=select+*+from+places;", True),
-        ("/-/config", False),
+        ("/-/settings", False),
         ("/test/dogs", False),
         ("/test/places", True),
         ("/test/places_caps", True),
@@ -145,8 +145,8 @@ async def test_plugin_is_installed():
 
 @pytest.mark.asyncio
 async def test_respects_base_url():
-    ds = Datasette([], memory=True, config={"base_url": "/foo/"})
-    response = await ds.client.get("/:memory:?sql=select+1+as+latitude,+2+as+longitude")
+    ds = Datasette([], memory=True, settings={"base_url": "/foo/"})
+    response = await ds.client.get("/_memory?sql=select+1+as+latitude,+2+as+longitude")
     assert (
         textwrap.dedent(
             """
