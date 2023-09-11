@@ -228,7 +228,7 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
         }
         if (next_url) {
           percent = ` (${
-            Math.round((count / data.filtered_table_rows_count) * 100 * 100) /
+            Math.round((count / data.count) * 100 * 100) /
             100
           }%)`;
           // Add a control to either continue loading or pause
@@ -253,7 +253,7 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
               );
             });
           }
-          progressDiv.innerHTML = `Showing ${count.toLocaleString()} of ${data.filtered_table_rows_count.toLocaleString()}${percent} `;
+          progressDiv.innerHTML = `Showing ${count.toLocaleString()} of ${data.count.toLocaleString()}${percent} `;
           if (button) {
             progressDiv.appendChild(button);
           }
@@ -304,9 +304,9 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
   map.addLayer(markerClusterGroup);
   let path = location.pathname + ".json" + location.search;
   if (path.indexOf("?") > -1) {
-    path += "&_size=max&_labels=on&_shape=objects";
+    path += "&_size=max&_labels=on&_extra=count&_extra=next_url";
   } else {
-    path += "?_size=max&_labels=on&_shape=objects";
+    path += "?_size=max&_labels=on&_extra=count&_extra=next_url";
   }
   loadMarkers(path, map, markerClusterGroup, progressDiv, 0);
 };
