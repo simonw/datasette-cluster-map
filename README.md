@@ -22,7 +22,14 @@ If you are deploying using the `datasette publish` command you can use the `--in
 
     datasette publish cloudrun mydb.db --install=datasette-cluster-map
 
-If any of your tables have a `latitude` and `longitude` column, a map will be automatically displayed.
+If any of your tables have one of the following pairs of columns a map will be automatically displayed:
+
+- `latitude` and `longitude`
+- `lat` and `lng`
+- `lat` and `lon`
+- `lat` and `long`
+- `*_latitude` and `*_longitude`
+- `*_lat` and `*_lng` for any of the three variants of `lng`
 
 ## Configuration
 
