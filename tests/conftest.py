@@ -1,5 +1,67 @@
 import datasette
+import pytest
+import sqlite3
+from subprocess import Popen, PIPE
+import sys
+import time
+import httpx
 
 
 def pytest_report_header():
     return "Datasette: {}".format(datasette.__version__)
+
+
+@pytest.fixture(scope="session")
+def ds_server(tmp_path_factory):
+    tmpdir = tmp_path_factory.mktemp("tmp")
+    db_path = str(tmpdir / "data.db")
+    db = sqlite3.connect(db_path)
+    for latitude, longitude in (
+        ("latitude", "longitude"),
+        ("lat", "lon"),
+        ("lat", "lng"),
+        ("lat", "long"),
+        ("foo_latitude", "foo_longitude"),
+    ):
+        with db:
+            db.execute(
+                f"""
+                create table {latitude}_{longitude} (
+                    id integer primary key,
+                    {latitude} float,
+                    {longitude} float
+                )
+            """
+            )
+            db.execute(
+                f"""
+                insert into {latitude}_{longitude} ({latitude}, {longitude})
+                values (37.0167, -122.0024), (37.3184, -121.9511)
+            """
+            )
+    process = Popen(
+        [
+            sys.executable,
+            "-m",
+            "datasette",
+            "--port",
+            "8126",
+            str(db_path),
+        ],
+        stdout=PIPE,
+    )
+    wait_until_responds("http://localhost:8126/")
+    yield "http://localhost:8126"
+    process.terminate()
+    process.wait()
+
+
+def wait_until_responds(url, timeout=5.0):
+    start = time.time()
+    while time.time() - start < timeout:
+        try:
+            httpx.get(url)
+            return
+        except httpx.ConnectError:
+            time.sleep(0.1)
+    raise AssertionError("Timed out waiting for {} to respond".format(url))
