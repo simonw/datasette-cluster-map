@@ -25,5 +25,4 @@ pytestmark = pytest.mark.skipif(sync_api is None, reason="playwright not install
 def test_markers_are_displayed(ds_server, table, page):
     page.goto(ds_server + "/data/" + table)
     # There should be two leaflet-marker-icons
-    page.wait_for_selector(".leaflet-marker-icon", timeout=3000)
-    assert len(page.query_selector_all(".leaflet-marker-icon")) == 2
+    sync_api.expect(page.locator(".leaflet-marker-icon")).to_have_count(2)
