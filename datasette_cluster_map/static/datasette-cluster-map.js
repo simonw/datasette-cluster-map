@@ -226,9 +226,10 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
         if (next_url && location.protocol == "https:") {
           next_url = next_url.replace(/^https?:/, "https:");
         }
+        let total = data.count || data.filtered_table_rows_count;
         if (next_url) {
           percent = ` (${
-            Math.round((count / data.count) * 100 * 100) /
+            Math.round((count / total) * 100 * 100) /
             100
           }%)`;
           // Add a control to either continue loading or pause
@@ -253,7 +254,7 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
               );
             });
           }
-          progressDiv.innerHTML = `Showing ${count.toLocaleString()} of ${data.count.toLocaleString()}${percent} `;
+          progressDiv.innerHTML = `Showing ${count.toLocaleString()} of ${total.toLocaleString()}${percent} `;
           if (button) {
             progressDiv.appendChild(button);
           }
@@ -303,10 +304,11 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
   });
   map.addLayer(markerClusterGroup);
   let path = location.pathname + ".json" + location.search;
+  const qs = "_size=max&_labels=on&_extra=count&_extra=next_url&_shape=objects";
   if (path.indexOf("?") > -1) {
-    path += "&_size=max&_labels=on&_extra=count&_extra=next_url";
+    path += "&" + qs;
   } else {
-    path += "?_size=max&_labels=on&_extra=count&_extra=next_url";
+    path += "?" + qs;
   }
   loadMarkers(path, map, markerClusterGroup, progressDiv, 0);
 };
