@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (
         col.toLowerCase() ==
         (
-          window.DATASETTE_CLUSTER_MAP_LATITUDE_COLUMN || "latitude"
+          window.DATASETTE_CLUSTER_MAP_LATITUDE_COLUMN
         ).toLowerCase()
       ) {
         latitudeColumn = col;
@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (
         col.toLowerCase() ==
         (
-          window.DATASETTE_CLUSTER_MAP_LONGITUDE_COLUMN || "longitude"
+          window.DATASETTE_CLUSTER_MAP_LONGITUDE_COLUMN
         ).toLowerCase()
       ) {
         longitudeColumn = col;
