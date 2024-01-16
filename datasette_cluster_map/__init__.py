@@ -80,11 +80,6 @@ def extra_body_script(database, table, columns, view_name, datasette):
 
 
 def find_columns(database, table, columns, view_name, datasette):
-    print(
-        "find_columns: database={}, table={}, columns={}, view_name={}".format(
-            database, table, columns, view_name
-        )
-    )
     if view_name not in ("database", "table"):
         return []
     if not columns:
