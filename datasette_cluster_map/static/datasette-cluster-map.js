@@ -111,11 +111,13 @@ const clusterMapMarkerContent = (row) => {
       // We have a valid popup configuration - render that
       let html = [];
       if (popup.link) {
-        html.push('<a href="' + clusterMapEscapeHTML(popup.link) + '">');
+        html.push('<a href="' + clusterMapEscapeHTML(popup.link) + '" target="_blank">');
       }
       if (popup.title) {
         html.push(
-          "<p><strong>" + clusterMapEscapeHTML(popup.title) + "</strong></p>"
+          "<p class=\"popup-title\"><span class=\"popup-title-prefix\"></span><strong>" + 
+            clusterMapEscapeHTML(popup.title) + 
+           "</strong><span class=\"popup-title-postfix\"></span></p>"
         );
       }
       if (popup.image) {
@@ -132,7 +134,9 @@ const clusterMapMarkerContent = (row) => {
       if (popup.description) {
         html.push(
           '<p style="text-decoration: none; color: black;">' +
+          '<span class="popup-description-prefix"></span>' + 
             clusterMapEscapeHTML(popup.description) +
+          '<span class="popup-description-postfix"></span>' +
             "</p>"
         );
       }
@@ -283,6 +287,7 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
     latlng = L.latLng(0, 0);
   let map = L.map(el, {
     //center: latlng,
+    tap: false,
     zoom: 13,
     layers: [tiles],
   });
