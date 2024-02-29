@@ -30,6 +30,7 @@ setup(
         "License :: OSI Approved :: Apache Software License",
     ],
     version=VERSION,
+    python_requires=">=3.8",
     packages=["datasette_cluster_map"],
     entry_points={"datasette": ["cluster_map = datasette_cluster_map"]},
     package_data={
