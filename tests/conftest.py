@@ -4,8 +4,6 @@ import pytest
 import sqlite3
 from subprocess import Popen, PIPE
 import sys
-import time
-import httpx
 
 
 def pytest_report_header():
