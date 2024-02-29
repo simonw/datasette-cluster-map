@@ -1,4 +1,5 @@
 import datasette
+from datasette_test import wait_until_responds
 import pytest
 import sqlite3
 from subprocess import Popen, PIPE
@@ -54,14 +55,3 @@ def ds_server(tmp_path_factory):
     yield "http://localhost:8126"
     process.terminate()
     process.wait()
-
-
-def wait_until_responds(url, timeout=5.0):
-    start = time.time()
-    while time.time() - start < timeout:
-        try:
-            httpx.get(url)
-            return
-        except httpx.ConnectError:
-            time.sleep(0.1)
-    raise AssertionError("Timed out waiting for {} to respond".format(url))

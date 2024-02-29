@@ -40,7 +40,14 @@ setup(
     },
     install_requires=["datasette>=0.54", "datasette-leaflet>=0.2.2"],
     extras_require={
-        "test": ["pytest", "pytest-asyncio", "httpx", "sqlite-utils", "nest-asyncio"],
+        "test": [
+            "pytest",
+            "pytest-asyncio",
+            "httpx",
+            "sqlite-utils",
+            "nest-asyncio",
+            "datasette-test",
+        ],
         "playwright": ["pytest-playwright"],
     },
 )
