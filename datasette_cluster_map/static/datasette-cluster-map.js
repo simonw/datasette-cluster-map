@@ -145,7 +145,7 @@ const clusterMapMarkerContent = (row) => {
 
   function addAsLink(element, parent) {
     if (element.startsWith('http://') || element.startsWith('https://')) {
-      const text = document.createTextNode(element + '\n');
+      const text = document.createTextNode('link\n');
       var link = document.createElement('a');
       link.setAttribute('href', element);
       link.appendChild(text);
@@ -190,7 +190,7 @@ const clusterMapMarkerContent = (row) => {
     dl.appendChild(dd);
   });
   return (
-    '<dl class="cluster-map-dl" style="height: 200px; overflow: auto">' +
+    '<dl class="cluster-map-dl" style="height: 100%; overflow: auto">' +
     dl.innerHTML +
     "</dl>"
   );
