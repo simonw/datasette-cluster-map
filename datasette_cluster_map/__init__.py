@@ -3,7 +3,7 @@ from typing import List
 import json
 
 
-TILE_LAYER = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+TILE_LAYER = "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
 TILE_LAYER_OPTIONS = {
     "maxZoom": 19,
     "attribution": '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
