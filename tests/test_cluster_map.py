@@ -53,7 +53,7 @@ def db_path(tmp_path_factory):
             {},
             "places",
             [
-                'window.DATASETTE_CLUSTER_MAP_TILE_LAYER = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"'
+                'window.DATASETTE_CLUSTER_MAP_TILE_LAYER = "https://tile.openstreetmap.org/{z}/{x}/{y}.png"'
             ],
         ),
         (
