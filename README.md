@@ -102,6 +102,8 @@ You can customize the tile layer used  by the maps using the `tile_layer` and `t
     }
 }
 ```
+If your tile server provides retina tiles, add `"detectRetina": true` to `tile_layer_options` to enable them.
+
 The [Leaflet Providers preview list](https://leaflet-extras.github.io/leaflet-providers/preview/index.html) has details of many other tile layers you can use.
 
 ## Custom marker popups

@@ -6,7 +6,6 @@ import json
 TILE_LAYER = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 TILE_LAYER_OPTIONS = {
     "maxZoom": 19,
-    "detectRetina": True,
     "attribution": '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 }
 
