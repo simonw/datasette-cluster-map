@@ -298,10 +298,17 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
   let progressDiv = document.createElement("div");
   progressDiv.style.marginBottom = "2em";
   el.parentNode.insertBefore(progressDiv, el.nextSibling);
-  let markerClusterGroup = L.markerClusterGroup({
+  // Merge user-supplied cluster_map_options with defaults
+  const defaultClusterOptions = {
     chunkedLoading: true,
     maxClusterRadius: 50,
-  });
+  };
+  const userClusterOptions = (typeof window.DATASETTE_CLUSTER_MAP_OPTIONS === 'object' && window.DATASETTE_CLUSTER_MAP_OPTIONS !== null)
+    ? window.DATASETTE_CLUSTER_MAP_OPTIONS
+    : {};
+  let markerClusterGroup = L.markerClusterGroup(
+    Object.assign({}, defaultClusterOptions, userClusterOptions)
+  );
   map.addLayer(markerClusterGroup);
   let path = location.pathname + ".json" + location.search;
   const qs = "_size=max&_labels=on&_extra=count&_extra=next_url&_shape=objects";

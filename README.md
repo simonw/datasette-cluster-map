@@ -85,6 +85,27 @@ from [USGS_WC_eartag_deployments_2009-2011]
 
 The map defaults to being displayed above the main results table on the page. You can use the `"container"` plugin setting to provide a CSS selector indicating an element that the map should be appended to instead.
 
+### Customizing marker cluster group options
+
+You can customize the [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster?tab=readme-ov-file#options) options by supplying a `cluster_map_options` dictionary in your plugin configuration. These options are merged with the plugin's defaults (`chunkedLoading: true`, `maxClusterRadius: 50`); your values override the defaults.
+
+For example, to make fewer, larger clusters, you can increase [`maxClusterRadius`](https://github.com/Leaflet/Leaflet.markercluster?tab=readme-ov-file#other-options):
+
+```json
+{
+    "plugins": {
+        "datasette-cluster-map": {
+            "cluster_map_options": {
+                "maxClusterRadius": 80    
+            }
+        }
+    }
+}
+```
+
+See the [Leaflet.markercluster options documentation](https://github.com/Leaflet/Leaflet.markercluster?tab=readme-ov-file#options) for all available options.
+
+
 ## Custom tile layers
 
 You can customize the tile layer used  by the maps using the `tile_layer` and `tile_layer_options` configuration settings. For example, to use the [OpenTopoMap](https://opentopomap.org/) you can use these settings:
