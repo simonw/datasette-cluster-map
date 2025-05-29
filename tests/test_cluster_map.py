@@ -98,6 +98,12 @@ def db_path(tmp_path_factory):
                 'window.DATASETTE_CLUSTER_MAP_LONGITUDE_COLUMN = "lng";',
             ],
         ),
+        # Test cluster_map_options emits correct JS
+        (
+            {"cluster_map_options": {"spiderfyOnMaxZoom": False}},
+            "places",
+            ['window.DATASETTE_CLUSTER_MAP_OPTIONS = {"spiderfyOnMaxZoom": false};'],
+        ),
     ],
 )
 async def test_plugin_config(db_path, config, table, expected_fragments):
