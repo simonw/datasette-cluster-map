@@ -127,7 +127,7 @@ async def test_plugin_only_on_tables_or_queries_with_columns(
 ):
     ds = Datasette([db_path])
     fragments = ("/datasette-cluster-map.js", "window.DATASETTE_CLUSTER_MAP_TILE_LAYER")
-    response = await ds.client.get(path)
+    response = await ds.client.get(path, follow_redirects=True)
     assert response.status_code == 200
     if should_have_javascript:
         for fragment in fragments:
@@ -155,7 +155,9 @@ async def test_plugin_is_installed():
 @pytest.mark.asyncio
 async def test_respects_base_url():
     ds = Datasette([], memory=True, settings={"base_url": "/foo/"})
-    response = await ds.client.get("/_memory?sql=select+1+as+latitude,+2+as+longitude")
+    response = await ds.client.get(
+        "/_memory?sql=select+1+as+latitude,+2+as+longitude", follow_redirects=True
+    )
     assert (
         textwrap.dedent(
             """
