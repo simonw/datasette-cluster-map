@@ -1,0 +1,53 @@
+[project]
+name = "datasette-cluster-map"
+version = "0.18.2"
+description = "Datasette plugin that shows a map for any data with latitude/longitude columns"
+readme = "README.md"
+authors = [{name = "Simon Willison"}]
+license = "Apache-2.0"
+classifiers = [
+    "Framework :: Datasette",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "datasette>=0.54",
+    "datasette-leaflet>=0.2.2",
+]
+
+[project.urls]
+Homepage = "https://github.com/simonw/datasette-cluster-map"
+Changelog = "https://github.com/simonw/datasette-cluster-map/releases"
+Issues = "https://github.com/simonw/datasette-cluster-map/issues"
+CI = "https://github.com/simonw/datasette-cluster-map/actions"
+
+[project.entry-points.datasette]
+cluster_map = "datasette_cluster_map"
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-asyncio",
+    "httpx",
+    "sqlite-utils",
+    "nest-asyncio",
+    "datasette-test",
+]
+playwright = ["pytest-playwright"]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "httpx",
+    "sqlite-utils",
+    "nest-asyncio",
+    "datasette-test",
+]
+
+[build-system]
+requires = ["uv_build>=0.9.18,<0.12.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ""
+source-include = ["tests/**"]
