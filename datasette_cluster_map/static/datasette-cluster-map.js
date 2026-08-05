@@ -218,7 +218,14 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
         });
         count += data.rows.length;
         markerClusterGroup.addLayers(markerList);
-        map.fitBounds(markerClusterGroup.getBounds());
+        let bounds = markerClusterGroup.getBounds();
+        if (bounds.isValid()) {
+          map.fitBounds(bounds);
+        } else if (window.DATASETTE_CLUSTER_MAP_DEFAULT_BOUNDS) {
+          map.fitBounds(window.DATASETTE_CLUSTER_MAP_DEFAULT_BOUNDS);
+        } else {
+          map.setView([0, 0], 2);
+        }
         let percent = "";
         let button;
         // Fix for http v.s. https

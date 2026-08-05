@@ -61,6 +61,12 @@ def extra_body_script(database, table, columns, view_name, datasette):
             json.dumps(location_columns[1])
         )
     )
+    # Default bounds - used if no data is returned, or to set the initial map view
+    js.append(
+        "window.DATASETTE_CLUSTER_MAP_DEFAULT_BOUNDS = {};".format(
+            json.dumps(config.get("default_bounds"))
+        )
+    )
     js.append("window.datasette = window.datasette || {};")
     js.append(
         "datasette.cluster_map = {\n"
