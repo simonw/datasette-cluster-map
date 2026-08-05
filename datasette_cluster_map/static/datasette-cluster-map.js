@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.head.appendChild(stylesheet2);
         // Leaflet needs to be loaded before Leaflet.clustermap
         import(datasette.leaflet.JAVASCRIPT_URL).then(() => {
-            import(datasette.cluster_map.MARKERCLUSTER_URL).then(hasLoaded);
+          import(datasette.cluster_map.MARKERCLUSTER_URL).then(hasLoaded);
         });
       };
       loadDependencies(() => addClusterMap(latitudeColumn, longitudeColumn));
@@ -121,8 +121,8 @@ const clusterMapMarkerContent = (row) => {
       if (popup.image) {
         html.push(
           '<img style="max-width: 100%" src="' +
-            clusterMapEscapeHTML(popup.image) +
-            '"'
+          clusterMapEscapeHTML(popup.image) +
+          '"'
         );
         if (popup.alt) {
           html.push(' alt="' + clusterMapEscapeHTML(popup.alt) + '"');
@@ -132,8 +132,8 @@ const clusterMapMarkerContent = (row) => {
       if (popup.description) {
         html.push(
           '<p style="text-decoration: none; color: black;">' +
-            clusterMapEscapeHTML(popup.description) +
-            "</p>"
+          clusterMapEscapeHTML(popup.description) +
+          "</p>"
         );
       }
       if (popup.link) {
@@ -228,10 +228,9 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
         }
         let total = data.count || data.filtered_table_rows_count;
         if (next_url) {
-          percent = ` (${
-            Math.round((count / total) * 100 * 100) /
+          percent = ` (${Math.round((count / total) * 100 * 100) /
             100
-          }%)`;
+            }%)`;
           // Add a control to either continue loading or pause
           button = document.createElement("button");
           button.classList.add("cluster-map-button");
@@ -277,15 +276,20 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
   el.style.width = "100%";
   el.style.height = "500px";
   let tiles = L.tileLayer(
-      window.DATASETTE_CLUSTER_MAP_TILE_LAYER,
-      window.DATASETTE_CLUSTER_MAP_TILE_LAYER_OPTIONS
-    ),
+    window.DATASETTE_CLUSTER_MAP_TILE_LAYER,
+    window.DATASETTE_CLUSTER_MAP_TILE_LAYER_OPTIONS
+  ),
     latlng = L.latLng(0, 0);
   let map = L.map(el, {
     //center: latlng,
     zoom: 13,
     layers: [tiles],
   });
+
+  // Store the map instance on the element it's attached to. 
+  // Other plugins can then draw on the same map if needed.
+  el.datasetteClusterMap = map;
+
   const container = window.DATASETTE_CLUSTER_MAP_CONTAINER;
   if (container && document.querySelector(container)) {
     document.querySelector(container).appendChild(el);
