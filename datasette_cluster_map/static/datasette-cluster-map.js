@@ -276,6 +276,7 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
   let el = document.createElement("div");
   el.style.width = "100%";
   el.style.height = "500px";
+  el.style.resize = "vertical";
   let tiles = L.tileLayer(
       window.DATASETTE_CLUSTER_MAP_TILE_LAYER,
       window.DATASETTE_CLUSTER_MAP_TILE_LAYER_OPTIONS
@@ -286,6 +287,9 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
     zoom: 13,
     layers: [tiles],
   });
+  new ResizeObserver(() => {
+    map.invalidateSize();
+  }).observe(el);
   const container = window.DATASETTE_CLUSTER_MAP_CONTAINER;
   if (container && document.querySelector(container)) {
     document.querySelector(container).appendChild(el);
