@@ -44,6 +44,12 @@ def extra_body_script(database, table, columns, view_name, datasette):
             json.dumps(config.get("tile_layer_options") or TILE_LAYER_OPTIONS)
         )
     )
+
+    # Add cluster_map_options if present
+    if "cluster_map_options" in config:
+        js.append(
+            f"window.DATASETTE_CLUSTER_MAP_OPTIONS = {json.dumps(config['cluster_map_options'])};"
+        )
     if config.get("container"):
         js.append(
             "window.DATASETTE_CLUSTER_MAP_CONTAINER = {};".format(
