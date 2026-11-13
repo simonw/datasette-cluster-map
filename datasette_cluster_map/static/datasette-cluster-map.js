@@ -283,6 +283,9 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
   let el = document.createElement("div");
   el.style.width = "100%";
   el.style.height = "500px";
+  // datasette-leaflet sets a default referrerPolicy for tile layers, because
+  // tile.openstreetmap.org blocks requests that have no Referer header.
+  // "referrerPolicy" in tile_layer_options overrides it.
   let tiles = L.tileLayer(
       window.DATASETTE_CLUSTER_MAP_TILE_LAYER,
       window.DATASETTE_CLUSTER_MAP_TILE_LAYER_OPTIONS

@@ -106,6 +106,12 @@ If your tile server provides retina tiles, add `"detectRetina": true` to `tile_l
 
 The [Leaflet Providers preview list](https://leaflet-extras.github.io/leaflet-providers/preview/index.html) has details of many other tile layers you can use.
 
+### Tile layers and the Referer header
+
+The default OpenStreetMap tile server [requires requests to include a Referer header](https://operations.osmfoundation.org/policies/tiles/). Tile requests send the origin of your Datasette instance, such as `https://example.com/`, but never the URL of the page showing the map. This applies to custom tile layers too.
+
+This is handled by [datasette-leaflet](https://datasette.io/plugins/datasette-leaflet): see [Tile layers and the Referer header](https://github.com/simonw/datasette-leaflet#tile-layers-and-the-referer-header) in its documentation for how to change or disable it.
+
 ## Custom marker popups
 
 The marker popup defaults to displaying the data for the underlying database row.

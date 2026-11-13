@@ -1,5 +1,6 @@
 import datasette
 from datasette_test import wait_until_responds
+import json
 import pytest
 import sqlite3
 from subprocess import Popen, PIPE
@@ -75,3 +76,20 @@ def _serve(db_path, port, *extra_args):
 @pytest.fixture(scope="session")
 def ds_server(ds_db_path):
     yield from _serve(ds_db_path, 8126)
+
+
+@pytest.fixture(scope="session")
+def ds_server_no_referrer_policy(ds_db_path, tmp_path_factory):
+    metadata_path = tmp_path_factory.mktemp("metadata") / "metadata.json"
+    metadata_path.write_text(
+        json.dumps(
+            {
+                "plugins": {
+                    "datasette-cluster-map": {
+                        "tile_layer_options": {"referrerPolicy": False}
+                    }
+                }
+            }
+        )
+    )
+    yield from _serve(ds_db_path, 8127, "--metadata", str(metadata_path))
