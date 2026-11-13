@@ -142,6 +142,19 @@ const clusterMapMarkerContent = (row) => {
       return html.join("");
     }
   }
+
+  function addAsLink(element, parent) {
+    if (element.startsWith('http://') || element.startsWith('https://')) {
+      const text = document.createTextNode('link\n');
+      var link = document.createElement('a');
+      link.setAttribute('href', element);
+      link.appendChild(text);
+      parent.appendChild(link);
+    } else {
+      parent.appendChild(document.createTextNode(element));
+    }
+  };
+
   // Otherwise, use a <dl>
   const dl = document.createElement("dl");
   Object.keys(row).forEach((key) => {
@@ -164,7 +177,12 @@ const clusterMapMarkerContent = (row) => {
         label = JSON.stringify(value);
       }
     }
-    dd.appendChild(document.createTextNode(label));
+    const parts = label.toString().split('\n');
+    if (parts.length > 1) {
+      parts.forEach((part) => addAsLink(part, dd));
+    } else {
+      addAsLink(label.toString(), dd);
+    }
     if (extra) {
       dd.appendChild(extra);
     }
@@ -172,7 +190,7 @@ const clusterMapMarkerContent = (row) => {
     dl.appendChild(dd);
   });
   return (
-    '<dl class="cluster-map-dl" style="height: 200px; overflow: auto">' +
+    '<dl class="cluster-map-dl" style="height: 100%; overflow: auto">' +
     dl.innerHTML +
     "</dl>"
   );
