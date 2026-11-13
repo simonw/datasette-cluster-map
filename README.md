@@ -10,7 +10,7 @@ More about this project: [Datasette plugins, and building a clustered map visual
 
 ## Demo
 
-[global-power-plants.datasettes.com](https://global-power-plants.datasettes.com/global-power-plants/global-power-plants) hosts a demo of this plugin running against a database of 33,000 power plants around the world.
+[datasette.io/global-power-plants/global-power-plants](https://datasette.io/global-power-plants/global-power-plants) hosts a demo of this plugin running against a database of 33,000 power plants around the world.
 
 ![Cluster map demo](https://static.simonwillison.net/static/2020/global-power-plants.png)
 
@@ -154,14 +154,6 @@ where id in (26, 27) order by id
 ```
 
 [Try that example here](https://www.niche-museums.com/browse?sql=select+json_object%28%0D%0A++%27image%27%2C+photo_url+%7C%7C+%27%3Fw%3D800%26h%3D400%26fit%3Dcrop%27%2C%0D%0A++%27title%27%2C+name%2C%0D%0A++%27description%27%2C+substr%28description%2C+0%2C+200%29%2C%0D%0A++%27link%27%2C+%27%2Fbrowse%2Fmuseums%2F%27+%7C%7C+id%0D%0A++%29+as+popup%2C%0D%0A++latitude%2C+longitude+from+museums) or take a look at [this demo built using a SQL view](https://dogsheep-photos.dogsheep.net/public/photos_on_a_map).
-
-## How I deployed the demo
-
-    datasette publish cloudrun global-power-plants.db \
-        --service global-power-plants \
-        --metadata metadata.json \
-        --install=datasette-cluster-map \
-        --extra-options="--config facet_time_limit_ms:1000"
 
 ## Development
 
