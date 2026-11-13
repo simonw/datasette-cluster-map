@@ -43,6 +43,43 @@ def test_load_all_paginates_through_table(ds_server, page):
     assert [response.status for response in responses] == [200, 200, 200]
 
 
+@pytest.mark.parametrize(
+    "path",
+    (
+        "/data/no_locations",
+        "/data?sql=select+*+from+no_locations",
+    ),
+)
+def test_no_map_if_no_rows_have_a_location(ds_server, page, path):
+    errors = []
+    page.on("pageerror", lambda error: errors.append(error))
+    with page.expect_response(lambda response: ".json" in response.url):
+        page.goto(ds_server + path)
+    page.wait_for_load_state("networkidle")
+    sync_api.expect(page.locator("table.rows-and-columns")).to_be_visible()
+    # Nothing is added to the page, and fitBounds() has not raised an error
+    sync_api.expect(page.locator(".leaflet-container")).to_have_count(0)
+    sync_api.expect(page.locator(".cluster-map-button")).to_have_count(0)
+    assert errors == []
+
+
+def test_map_appears_once_a_location_has_loaded(ds_server, page):
+    errors = []
+    page.on("pageerror", lambda error: errors.append(error))
+    page.goto(ds_server + "/data/locations_on_last_page")
+    # No locations in the first 10 rows, so no map - but there are more rows
+    button = page.get_by_role("button", name="load all")
+    sync_api.expect(button).to_be_visible()
+    sync_api.expect(page.locator(".leaflet-container")).to_have_count(0)
+    sync_api.expect(page.locator(".cluster-map-button").locator("..")).to_contain_text(
+        "No locations in the first 10 of 25 rows"
+    )
+    button.click()
+    sync_api.expect(page.locator(".leaflet-marker-icon")).to_have_count(5)
+    sync_api.expect(page.locator(".leaflet-container + div")).to_be_empty()
+    assert errors == []
+
+
 PNG_1X1 = base64.b64decode(
     "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
 )

@@ -44,6 +44,22 @@ def ds_db_path(tmp_path_factory):
             "insert into paginated (latitude, longitude) values (?, ?)",
             [(37.0 + i * 0.01, -122.0 - i * 0.01) for i in range(25)],
         )
+    # Latitude and longitude columns that have no values in them
+    with db:
+        db.execute(
+            "create table no_locations (id integer primary key, latitude float, longitude float)"
+        )
+        db.execute("insert into no_locations (latitude, longitude) values (null, null)")
+    # 25 rows where only the last 5 have a location, so none on the first page
+    with db:
+        db.execute(
+            "create table locations_on_last_page (id integer primary key, latitude float, longitude float)"
+        )
+        db.executemany(
+            "insert into locations_on_last_page (latitude, longitude) values (?, ?)",
+            [(None, None)] * 20
+            + [(37.0 + i * 0.01, -122.0 - i * 0.01) for i in range(5)],
+        )
     db.close()
     return db_path
 

@@ -200,7 +200,55 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
     return longitude >= -180 && longitude <= 180;
   }
 
-  const loadMarkers = (path, map, markerClusterGroup, progressDiv, count) => {
+  let el = document.createElement("div");
+  el.style.width = "100%";
+  el.style.height = "500px";
+  let progressDiv = document.createElement("div");
+  progressDiv.style.marginBottom = "2em";
+  let markerClusterGroup = L.markerClusterGroup({
+    chunkedLoading: true,
+    maxClusterRadius: 50,
+  });
+  let map = null;
+
+  // Nothing is added to the page until there is something to show: the map
+  // once a row with a valid latitude and longitude has loaded, or just the
+  // progress message if there are more rows that could still be fetched
+  const addProgressToPage = () => {
+    if (progressDiv.parentNode) {
+      return;
+    }
+    const container = window.DATASETTE_CLUSTER_MAP_CONTAINER;
+    if (container && document.querySelector(container)) {
+      document.querySelector(container).appendChild(progressDiv);
+    } else {
+      let table =
+        document.querySelector(".table-wrapper") ||
+        document.querySelector("table.rows-and-columns");
+      table.parentNode.insertBefore(progressDiv, table);
+    }
+  };
+  const showMap = () => {
+    if (map) {
+      return;
+    }
+    addProgressToPage();
+    progressDiv.parentNode.insertBefore(el, progressDiv);
+    // datasette-leaflet sets a default referrerPolicy for tile layers, because
+    // tile.openstreetmap.org blocks requests that have no Referer header.
+    // "referrerPolicy" in tile_layer_options overrides it.
+    let tiles = L.tileLayer(
+      window.DATASETTE_CLUSTER_MAP_TILE_LAYER,
+      window.DATASETTE_CLUSTER_MAP_TILE_LAYER_OPTIONS
+    );
+    map = L.map(el, {
+      zoom: 13,
+      layers: [tiles],
+    });
+    map.addLayer(markerClusterGroup);
+  };
+
+  const loadMarkers = (path, count) => {
     count = count || 0;
     return fetch(path)
       .then((r) => r.json())
@@ -217,8 +265,11 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
           }
         });
         count += data.rows.length;
-        markerClusterGroup.addLayers(markerList);
-        map.fitBounds(markerClusterGroup.getBounds());
+        if (markerList.length) {
+          showMap();
+          markerClusterGroup.addLayers(markerList);
+          map.fitBounds(markerClusterGroup.getBounds());
+        }
         let percent = "";
         let button;
         // Fix for http v.s. https
@@ -251,68 +302,29 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
             button.innerHTML = "load all";
             button.addEventListener("click", () => {
               keepGoing = true;
-              loadMarkers(
-                next_url,
-                map,
-                markerClusterGroup,
-                progressDiv,
-                count,
-                keepGoing
-              );
+              loadMarkers(next_url, count);
             });
           }
-          progressDiv.innerHTML = `Showing ${count.toLocaleString()}${ofTotal}${percent} `;
-          if (button) {
-            progressDiv.appendChild(button);
+          addProgressToPage();
+          if (map) {
+            progressDiv.innerHTML = `Showing ${count.toLocaleString()}${ofTotal}${percent} `;
+          } else {
+            // No map yet, but rows that have not been fetched might have locations
+            progressDiv.innerHTML = `No locations in the first ${count.toLocaleString()}${ofTotal} rows `;
           }
-        } else {
+          progressDiv.appendChild(button);
+        } else if (map) {
           progressDiv.innerHTML = "";
+        } else {
+          // Every row has been fetched and none of them had a location
+          progressDiv.remove();
         }
         if (next_url && keepGoing) {
-          return loadMarkers(
-            next_url,
-            map,
-            markerClusterGroup,
-            progressDiv,
-            count
-          );
+          return loadMarkers(next_url, count);
         }
       });
   };
 
-  let el = document.createElement("div");
-  el.style.width = "100%";
-  el.style.height = "500px";
-  // datasette-leaflet sets a default referrerPolicy for tile layers, because
-  // tile.openstreetmap.org blocks requests that have no Referer header.
-  // "referrerPolicy" in tile_layer_options overrides it.
-  let tiles = L.tileLayer(
-      window.DATASETTE_CLUSTER_MAP_TILE_LAYER,
-      window.DATASETTE_CLUSTER_MAP_TILE_LAYER_OPTIONS
-    ),
-    latlng = L.latLng(0, 0);
-  let map = L.map(el, {
-    //center: latlng,
-    zoom: 13,
-    layers: [tiles],
-  });
-  const container = window.DATASETTE_CLUSTER_MAP_CONTAINER;
-  if (container && document.querySelector(container)) {
-    document.querySelector(container).appendChild(el);
-  } else {
-    let table =
-      document.querySelector(".table-wrapper") ||
-      document.querySelector("table.rows-and-columns");
-    table.parentNode.insertBefore(el, table);
-  }
-  let progressDiv = document.createElement("div");
-  progressDiv.style.marginBottom = "2em";
-  el.parentNode.insertBefore(progressDiv, el.nextSibling);
-  let markerClusterGroup = L.markerClusterGroup({
-    chunkedLoading: true,
-    maxClusterRadius: 50,
-  });
-  map.addLayer(markerClusterGroup);
   let path = location.pathname + ".json" + location.search;
   let qs = "_size=max&_labels=on&_shape=objects";
   if (document.querySelector("body.table")) {
@@ -326,5 +338,5 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
   } else {
     path += "?" + qs;
   }
-  loadMarkers(path, map, markerClusterGroup, progressDiv, 0);
+  loadMarkers(path, 0);
 };

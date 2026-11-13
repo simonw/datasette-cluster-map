@@ -31,6 +31,8 @@ If any of your tables have one of the following pairs of columns a map will be a
 - `*_latitude` and `*_longitude`
 - `*_lat` and `*_lng` for any of the three variants of `lng`
 
+The map is added to the page once the first row with a valid latitude and longitude has loaded. If none of the rows have a location, no map is shown.
+
 ## Configuration
 
 If your columns are called something else you can configure the column names using [plugin configuration](https://docs.datasette.io/en/stable/plugins.html#plugin-configuration) in a `metadata.json` file. For example, if all of your columns are called `xlat` and `xlng` you can create a `metadata.json` file like this:
