@@ -163,20 +163,11 @@ where id in (26, 27) order by id
 
 ## Development
 
-To set up this plugin locally, first checkout the code. Then create a new virtual environment:
+To set up this plugin locally, first checkout the code. Then run the tests using [uv](https://docs.astral.sh/uv/):
 
     cd datasette-cluster-map
-    python3 -mvenv venv
-    source venv/bin/activate
+    uv run pytest
 
-Or if you are using `pipenv`:
+Some of the tests use [Playwright](https://playwright.dev/python/) to drive a real browser. If they fail because the browser is missing, install it like this:
 
-    pipenv shell
-
-Now install the dependencies and tests:
-
-    pip install -e '.[test]'
-
-To run the tests:
-
-    pytest
+    uv run playwright install chromium

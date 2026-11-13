@@ -23,21 +23,11 @@ CI = "https://github.com/simonw/datasette-cluster-map/actions"
 [project.entry-points.datasette]
 cluster_map = "datasette_cluster_map"
 
-[project.optional-dependencies]
-test = [
-    "pytest",
-    "pytest-asyncio",
-    "httpx",
-    "sqlite-utils",
-    "nest-asyncio",
-    "datasette-test",
-]
-playwright = ["pytest-playwright"]
-
 [dependency-groups]
 dev = [
     "pytest",
     "pytest-asyncio",
+    "pytest-playwright",
     "httpx",
     "sqlite-utils",
     "nest-asyncio",

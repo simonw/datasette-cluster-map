@@ -1,15 +1,9 @@
 import base64
+import nest_asyncio
+from playwright import sync_api
 import pytest
 
-try:
-    from playwright import sync_api
-except ImportError:
-    sync_api = None
-import nest_asyncio
-
 nest_asyncio.apply()
-
-pytestmark = pytest.mark.skipif(sync_api is None, reason="playwright not installed")
 
 
 @pytest.mark.parametrize(

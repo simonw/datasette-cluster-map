@@ -24,8 +24,8 @@ jobs:
         key: ${{ runner.os }}-browsers
     - name: Install dependencies
       run: |
-        pip install -e '.[playwright]' --group dev
-        playwright install
+        pip install -e . --group dev
+        playwright install chromium
         pip install "datasette${{ matrix.datasette-version }}"
     - name: Run tests
       run: |
