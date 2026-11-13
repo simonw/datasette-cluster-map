@@ -1,6 +1,6 @@
 [project]
 name = "datasette-cluster-map"
-version = "0.18.2"
+version = "0.19"
 description = "Datasette plugin that shows a map for any data with latitude/longitude columns"
 readme = "README.md"
 authors = [{name = "Simon Willison"}]
