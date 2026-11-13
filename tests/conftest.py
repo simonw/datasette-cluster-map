@@ -11,7 +11,7 @@ def pytest_report_header():
 
 
 @pytest.fixture(scope="session")
-def ds_server(tmp_path_factory):
+def ds_db_path(tmp_path_factory):
     tmpdir = tmp_path_factory.mktemp("tmp")
     db_path = str(tmpdir / "data.db")
     db = sqlite3.connect(db_path)
@@ -23,33 +23,55 @@ def ds_server(tmp_path_factory):
         ("foo_latitude", "foo_longitude"),
     ):
         with db:
-            db.execute(
-                f"""
+            db.execute(f"""
                 create table {latitude}_{longitude} (
                     id integer primary key,
                     {latitude} float,
                     {longitude} float
                 )
-            """
-            )
-            db.execute(
-                f"""
+            """)
+            db.execute(f"""
                 insert into {latitude}_{longitude} ({latitude}, {longitude})
                 values (37.0167, -122.0024), (37.3184, -121.9511)
-            """
-            )
+            """)
+    # 25 rows, more than the max_returned_rows of 10 set below
+    with db:
+        db.execute(
+            "create table paginated (id integer primary key, latitude float, longitude float)"
+        )
+        db.executemany(
+            "insert into paginated (latitude, longitude) values (?, ?)",
+            [(37.0 + i * 0.01, -122.0 - i * 0.01) for i in range(25)],
+        )
+    db.close()
+    return db_path
+
+
+def _serve(db_path, port, *extra_args):
     process = Popen(
         [
             sys.executable,
             "-m",
             "datasette",
             "--port",
-            "8126",
+            str(port),
+            "--setting",
+            "max_returned_rows",
+            "10",
+            *extra_args,
             str(db_path),
         ],
         stdout=PIPE,
     )
-    wait_until_responds("http://localhost:8126/")
-    yield "http://localhost:8126"
-    process.terminate()
-    process.wait()
+    url = "http://localhost:{}".format(port)
+    try:
+        wait_until_responds(url + "/")
+        yield url
+    finally:
+        process.terminate()
+        process.wait()
+
+
+@pytest.fixture(scope="session")
+def ds_server(ds_db_path):
+    yield from _serve(ds_db_path, 8126)

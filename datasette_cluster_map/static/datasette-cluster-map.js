@@ -226,12 +226,19 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
         if (next_url && location.protocol == "https:") {
           next_url = next_url.replace(/^https?:/, "https:");
         }
+        // Datasette 1.0 returns "count", earlier versions used
+        // "filtered_table_rows_count". The count can be missing (the
+        // count query timed out) or a capped lower bound, in which
+        // case Datasette 1.0 sets count_truncated and returns limit + 1
         let total = data.count || data.filtered_table_rows_count;
+        let ofTotal = "";
+        if (total && data.count_truncated) {
+          ofTotal = ` of ${(total - 1).toLocaleString()}+`;
+        } else if (total) {
+          ofTotal = ` of ${total.toLocaleString()}`;
+          percent = ` (${Math.round((count / total) * 100 * 100) / 100}%)`;
+        }
         if (next_url) {
-          percent = ` (${
-            Math.round((count / total) * 100 * 100) /
-            100
-          }%)`;
           // Add a control to either continue loading or pause
           button = document.createElement("button");
           button.classList.add("cluster-map-button");
@@ -254,7 +261,7 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
               );
             });
           }
-          progressDiv.innerHTML = `Showing ${count.toLocaleString()} of ${total.toLocaleString()}${percent} `;
+          progressDiv.innerHTML = `Showing ${count.toLocaleString()}${ofTotal}${percent} `;
           if (button) {
             progressDiv.appendChild(button);
           }
@@ -304,7 +311,13 @@ const addClusterMap = (latitudeColumn, longitudeColumn) => {
   });
   map.addLayer(markerClusterGroup);
   let path = location.pathname + ".json" + location.search;
-  const qs = "_size=max&_labels=on&_extra=count&_extra=next_url&_shape=objects";
+  let qs = "_size=max&_labels=on&_shape=objects";
+  if (document.querySelector("body.table")) {
+    // Datasette 1.0 returns a 400 error for any ?_extra= it does not
+    // recognize: count is only available for tables and views, not for
+    // SQL queries, and next_url is now always included
+    qs += "&_extra=count";
+  }
   if (path.indexOf("?") > -1) {
     path += "&" + qs;
   } else {
