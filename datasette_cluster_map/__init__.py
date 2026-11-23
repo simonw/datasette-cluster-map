@@ -79,7 +79,9 @@ def extra_body_script(database, table, columns, view_name, datasette):
 
 
 def find_columns(database, table, columns, view_name, datasette):
-    if view_name not in ("database", "table"):
+    # SQL query pages use view_name="database" before Datasette 1.0 and
+    # view_name="query" from 1.0a onwards
+    if view_name not in ("database", "query", "table"):
         return []
     if not columns:
         return []
